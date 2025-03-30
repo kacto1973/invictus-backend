@@ -4,7 +4,9 @@
 	"description": "Proyecto Rest API para la aplicacion de Invictus",
 	"main": "index.js",
 	"scripts": {
-		"start": "node myApp.js"
+		"start": "node myApp.js",
+		"testCreate": "node functions/database/testCreate.js",
+		"testDelete": "node functions/database/testDelete.js"
 	},
 	"dependencies": {
 		"body-parser": "^2.2.0",
