@@ -68,6 +68,24 @@ app.get("/equipos", (req, res) => {
     });
 });
 
+/**
+ * ruta que obtiene una solicitud GET con un parámetro `id` en el query
+ * para devolver los detalles de un equipo
+ *
+ * @example
+ * request:
+ * localhost:3000/equipos/detalles?id=67e98b3830d3a9103cb6635a
+ *
+ * respuesta:
+ * {
+ *  "_id": "67e98b3830d3a9103cb6635a",
+ *  "nombre": "Centrífuga de alta velocidad",
+ *  "descripcion": "Modelo X-3000 con rotor refrigerado",
+ *  "urlImagen": "http://ejemplo.com/centrifuga.jpg",
+ *  "requiereServicio": true,
+ *  "status": "mantenimiento"
+ * }
+ */
 app.get("/equipos/detalles", (req, res) => {
   let id = req.query["id"];
   if (!/^[0-9a-fA-F]{24}$/.test(id)) {
