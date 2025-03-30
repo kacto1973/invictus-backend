@@ -3,6 +3,7 @@ Este archivo sirve para conectar el sistema a la base de datos.
 Devuelve el objeto mongoose ya conectado a la base de datos.
 */
 
+require('dotenv').config()
 const mongoose = require('mongoose');
 
 // Exporta mongoose inmediatamente
