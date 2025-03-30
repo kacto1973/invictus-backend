@@ -5,12 +5,13 @@ Cada vez que alguien agregue una nueva funcion en forma de un archivo, debe impo
 
 // Importar las funciones que se van a usar
 const { devolverDatosInicio } = require("./devolverDatosInicio");
-const { getEquipos } = require("./equipos");
+const { getEquipos, getEquipoDetails } = require("./equipos");
 
 // Aquí se almacenarán todas las funciones
 const funciones = {
   devolverDatosInicio,
   getEquipos,
+  getEquipoDetails,
 };
 
 // Exportar las funciones que se van a usar

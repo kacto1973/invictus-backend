@@ -57,11 +57,36 @@ app.get("/equipos", (req, res) => {
   funciones
     .getEquipos(query)
     .then((equipos) => {
+      if (!equipos) {
+        res.status(404).json({ error: "No se encontró ningún equipo" });
+      }
       res.json(equipos);
     })
     .catch((error) => {
       console.error(error);
       res.status(500).json({ error: "Error al obtener equipos" });
+    });
+});
+
+app.get("/equipos/detalles", (req, res) => {
+  let id = req.query["id"];
+  if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+    return res.status(500).json({
+      error:
+        "El parámetro id debe tener una longitud de 24 caracteres hexadecimales",
+    });
+  }
+  funciones
+    .getEquipoDetails(id)
+    .then((equipo) => {
+      if (!equipo) {
+        return res.status(404).json({ error: "El equipo no existe" });
+      }
+      res.json(equipo);
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ error: "Error al obtener detalles del equipo" });
     });
 });
 
