@@ -1,4 +1,5 @@
-const { equipos } = require("./database/schemas");
+const mongoose = require("mongoose");
+const { equipos, reservas, mantenimientos } = require("./database/schemas");
 const { matchSorter } = require("match-sorter");
 
 /**
@@ -20,11 +21,41 @@ async function getEquipos(query) {
  *
  * @async
  * @param {string} id - el id principal del equipo, generado automaticamente por mongodb en el campo _id
- * @returns {Promise<Object|null>} - objeto que contiene _id,nombre,descripción,urlImagen,requiereServicio y status del equipo
+ * @returns {Promise<Object|null>} - objeto que contiene _id,nombre,descripción,urlImagen,requiereServicio, status, mantenimientos y reservas del equipo
  */
 async function getEquipoDetails(id) {
-  const equipoDetails = await equipos.findById(id).select("-__v");
-  return equipoDetails;
+  try {
+    const equipoDetails = await equipos.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "mantenimientos",
+          localField: "_id",
+          foreignField: "equipoId",
+          as: "mantenimientos",
+        },
+      },
+      {
+        $lookup: {
+          from: "reservas",
+          localField: "_id",
+          foreignField: "idEquipo",
+          as: "reservas",
+        },
+      },
+      {
+        $project: {
+          __v: 0,
+          "reservas.idEquipo": 0,
+          "mantenimientos.idEquipo": 0,
+        },
+      },
+    ]);
+    return equipoDetails;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 module.exports = { getEquipos, getEquipoDetails };
