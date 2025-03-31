@@ -181,6 +181,11 @@ const notificacionSchema = new mongoose.Schema({
     ref: 'TipoNotificacion',
     required: true
   },
+  idEstadoNotificacion: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'EstadoNotificacion',
+    required: true
+  },
   idReactivo: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Reactivo',
@@ -208,7 +213,8 @@ const notificacionSchema = new mongoose.Schema({
 const tipoNoficacionSchema = new mongoose.Schema({
   nombre: {
     type: String,
-    required: true
+    required: true,
+    enum: ["reactivoAgotado", "equipoCalendarizado", "actualmenteEnMantenimiento"]
   }
 });
 
@@ -274,6 +280,14 @@ const motivoSchema = new mongoose.Schema({
     }
 });
 
+const estadoNotificacionSchema = new mongoose.Schema({
+    nombre: {
+        type: String,
+        required: true,
+        enum: ["leido", "noLeido", "eliminado"]
+    }
+})
+
 // Aquí se crean los modelos a partir de los esquemas
 reactivos = mongoose.model("Reactivo", reactivoSchema);
 gabinetes = mongoose.model("Gabinete", gabineteSchema);
@@ -287,6 +301,7 @@ reportes = mongoose.model("Reporte", reportesSchema);
 tiposReportes = mongoose.model("TipoReporte", tipoReporteSchema);
 notificaciones = mongoose.model("Notificacion", notificacionSchema);
 tiposNotificaciones = mongoose.model("TipoNotificacion", tipoNoficacionSchema);
+estadoNotificaciones = mongoose.model("EstadoNotificacion", estadoNotificacionSchema);
 equipos = mongoose.model("Equipo", equipoSchema);
 reservas = mongoose.model("Reserva", reservaSchema);
 mantenimientos = mongoose.model("Mantenimiento", mantenimientoSchema);
@@ -305,9 +320,10 @@ module.exports = {
   reportes,
   tiposReportes,
   notificaciones,
+  estadoNotificaciones,
   tiposNotificaciones,
   equipos,
   reservas,
   mantenimientos,
-  motivos
+  motivos,
 };
