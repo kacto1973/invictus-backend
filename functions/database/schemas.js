@@ -203,7 +203,7 @@ const notificacionSchema = new mongoose.Schema({
     default: Date.now
   },
   status: {
-    type: String,
+    type: Boolean,
     required: true
   }
 });
