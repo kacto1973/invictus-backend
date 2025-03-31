@@ -9,7 +9,7 @@ const { matchSorter } = require("match-sorter");
  * @returns {Promise<Array>} - lista de equipos, si se pasa un query la lista contendrá solo los elementos que coinciden
  */
 async function getEquipos(query) {
-  let equiposList = await equipos.find().select("-__v");
+  let equiposList = await equipos.find().select("_id nombre urlImagen status");
   if (query) equiposList = matchSorter(equiposList, query);
 
   return equiposList;
