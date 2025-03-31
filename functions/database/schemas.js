@@ -188,13 +188,11 @@ const notificacionSchema = new mongoose.Schema({
   },
   idReactivo: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Reactivo',
-    required: true
+    ref: 'Reactivo'
   },
   idEquipo: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Equipo',
-    required: true
+    ref: 'Equipo'
   },
   descripcion: {
     type: String,
