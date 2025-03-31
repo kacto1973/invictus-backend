@@ -42,11 +42,9 @@ app.get("/home/datos", (req, res) => {
  *  {
  *    "_id": "67e98b3830d3a9103cb66359",
  *    "nombre": "Microscopio Electrónico",
- *    "descripcion": "Para observación a alta resolución",
  *    "urlImagen": "http://ejemplo.com/microscopio.jpg",
- *    "requiereServicio": false,
  *    "status": "activo"
- *  }
+ *  },
  * ...]
  */
 app.get("/equipos", (req, res) => {
