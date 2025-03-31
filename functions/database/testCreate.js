@@ -14,11 +14,12 @@ const {
     reportes,
     tiposReportes,
     notificaciones,
+    estadoNotificaciones,
     tiposNotificaciones,
     equipos,
     reservas,
     mantenimientos,
-    motivos
+    motivos,
 } = require('./schemas');
 
 async function insertTestData() {
@@ -85,9 +86,17 @@ async function insertTestData() {
         ]);
 
         // Tipos de notificación
-        const [tipoStockMinimo, tipoMantenimiento] = await tiposNotificaciones.create([
-            { nombre: 'Stock mínimo' },
-            { nombre: 'Mantenimiento requerido' }
+        const [reactivoAgotado, equipoCalendarizado, actualmenteEnMantenimiento] = await tiposNotificaciones.create([
+            { nombre: 'reactivoAgotado' },
+            { nombre: 'equipoCalendarizado' },
+            { nombre: 'actualmenteEnMantenimiento' },
+        ]);
+
+        // Estados de notificación
+        const [leido, noLeido, eliminado] = await estadoNotificaciones.create([
+            { nombre: 'leido' },
+            { nombre: 'noLeido' },
+            { nombre: 'eliminado' }
         ]);
 
         // Equipos
@@ -222,18 +231,25 @@ async function insertTestData() {
         // Notificaciones
         await notificaciones.create([
             {
-                idTipoNotificacion: tipoStockMinimo._id,
+                idTipoNotificacion: reactivoAgotado._id,
                 idReactivo: etanol._id,
-                idEquipo: microscopio._id,
+                idEquipo: null,
                 descripcion: 'Stock de etanol bajo mínimo',
-                status: 'pendiente'
+                status: true
             },
             {
-                idTipoNotificacion: tipoMantenimiento._id,
-                idReactivo: acidoClorhidrico._id,
+                idTipoNotificacion: equipoCalendarizado._id,
+                idReactivo: null,
                 idEquipo: centrifuga._id,
                 descripcion: 'Mantenimiento preventivo requerido',
-                status: 'resuelto'
+                status: true
+            },
+            {
+                idTipoNotificacion: actualmenteEnMantenimiento._id,
+                idReactivo: null,
+                idEquipo: espectrometro._id,
+                descripcion: 'Espectrómetro en mantenimiento',
+                status: true
             }
         ]);
 
