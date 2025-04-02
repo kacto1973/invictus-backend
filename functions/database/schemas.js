@@ -40,7 +40,8 @@ const reactivoSchema = new mongoose.Schema({
     required: true
   },
   status: {
-    type: String,
+    type: Boolean,
+    required: true
   },
   presentacion: {
     type: Number,
@@ -58,7 +59,8 @@ const gabineteSchema = new mongoose.Schema({
     type: String
   },
   status: {
-    type: String
+    type: Boolean,
+    required: true
   }
 });
 
@@ -101,7 +103,8 @@ const reactivoDefectuosoSchema = new mongoose.Schema({
     required: true
   },
   status: {
-    type: String
+    type: Boolean,
+    required: true
   },
   cantidad: {
     type: Number,
@@ -163,7 +166,7 @@ const reportesSchema = new mongoose.Schema({
     required: true
   },
   status: {
-    type: String,
+    type: Boolean,
     required: true
   }
 });
@@ -234,7 +237,7 @@ const equipoSchema = new mongoose.Schema({
     required: true
   },
   status: {
-    type: String,
+    type: Boolean,
     required: true
   }
 });
