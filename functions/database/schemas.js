@@ -256,6 +256,10 @@ const reservaSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  status: {
+    type: Boolean,
+    required: true
+  }
 });
 
 const mantenimientoSchema = new mongoose.Schema({
@@ -272,6 +276,10 @@ const mantenimientoSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  status: {
+    type: Boolean,
+    required: true
+  }
 });
 
 const motivoSchema = new mongoose.Schema({
