@@ -30,17 +30,17 @@ async function insertTestData() {
             {
                 nombre: 'Gabinete Química',
                 descripcion: 'Reactivos químicos generales',
-                status: 'activo'
+                status: true
             },
             {
                 nombre: 'Gabinete Biología',
                 descripcion: 'Materiales biológicos y cultivos',
-                status: 'activo'
+                status: true
             },
             {
                 nombre: 'Gabinete Desechos',
                 descripcion: 'Materiales para desecho',
-                status: 'inactivo'
+                status: false
             }
         ]);
 
@@ -106,21 +106,21 @@ async function insertTestData() {
                 descripcion: 'Para observación a alta resolución',
                 urlImagen: 'http://ejemplo.com/microscopio.jpg',
                 requiereServicio: false,
-                status: 'activo'
+                status: true
             },
             {
                 nombre: 'Centrífuga de alta velocidad',
                 descripcion: 'Modelo X-3000 con rotor refrigerado',
                 urlImagen: 'http://ejemplo.com/centrifuga.jpg',
                 requiereServicio: true,
-                status: 'mantenimiento'
+                status: true
             },
             {
                 nombre: 'Espectrómetro de masas',
                 descripcion: 'Analizador de composición química',
                 urlImagen: 'http://ejemplo.com/espectrometro.jpg',
                 requiereServicio: true,
-                status: 'activo'
+                status: true
             }
         ]);
 
@@ -134,7 +134,7 @@ async function insertTestData() {
                 nombre: 'Ácido Clorhídrico',
                 esPeligroso: true,
                 cantidad: 500,
-                status: 'activo',
+                status: true,
                 presentacion: 1000
             },
             {
@@ -145,7 +145,7 @@ async function insertTestData() {
                 nombre: 'Etanol 96%',
                 esPeligroso: true,
                 cantidad: 10,
-                status: 'activo',
+                status: true,
                 presentacion: 2
             },
             {
@@ -156,7 +156,7 @@ async function insertTestData() {
                 nombre: 'Agarosa',
                 esPeligroso: false,
                 cantidad: 200,
-                status: 'activo',
+                status: true,
                 presentacion: 500
             },
             {
@@ -167,7 +167,7 @@ async function insertTestData() {
                 nombre: 'Acetato de sodio',
                 esPeligroso: false,
                 cantidad: 0,
-                status: 'activo',
+                status: true,
                 presentacion: 1000
             }
         ]);
@@ -178,14 +178,14 @@ async function insertTestData() {
                 idReactivo: acidoClorhidrico._id,
                 idMotivo: motivoCaducado._id,
                 descripcion: 'Lote 2022 caducado',
-                status: 'resuelto',
+                status: true,
                 cantidad: 5
             },
             {
                 idReactivo: etanol._id,
                 idMotivo: motivoDaniado._id,
                 descripcion: 'Envase roto',
-                status: 'pendiente',
+                status: true,
                 cantidad: 2
             }
         ]);
@@ -218,13 +218,13 @@ async function insertTestData() {
                 idTipoReporte: tipoInventario._id,
                 nombre: 'Inventario Q1 2024',
                 urlReporte: '/reportes/inventario-q1-2024.pdf',
-                status: 'generado'
+                status: true
             },
             {
                 idTipoReporte: tipoUsoEquipos._id,
                 nombre: 'Uso de equipos Marzo',
                 urlReporte: '/reportes/uso-equipos-marzo.pdf',
-                status: 'pendiente'
+                status: true
             }
         ]);
 
@@ -258,12 +258,14 @@ async function insertTestData() {
             {
                 idEquipo: microscopio._id,
                 fechaInicio: new Date('2024-03-01'),
-                fechaFin: new Date('2024-03-05')
+                fechaFin: new Date('2024-03-05'),
+                status: true
             },
             {
                 idEquipo: espectrometro._id,
                 fechaInicio: new Date('2024-03-10'),
-                fechaFin: new Date('2024-03-12')
+                fechaFin: new Date('2024-03-12'),
+                status: true
             }
         ]);
 
@@ -272,12 +274,14 @@ async function insertTestData() {
             {
                 idEquipo: centrifuga._id,
                 fechaInicio: new Date('2024-04-01'),
-                fechaFin: new Date('2024-04-03')
+                fechaFin: new Date('2024-04-03'),
+                status: true
             },
             {
                 idEquipo: espectrometro._id,
                 fechaInicio: new Date('2024-05-15'),
-                fechaFin: new Date('2024-05-17')
+                fechaFin: new Date('2024-05-17'),
+                status: true
             }
         ]);
 
