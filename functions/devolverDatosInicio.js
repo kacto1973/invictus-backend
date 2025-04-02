@@ -7,6 +7,9 @@ const {
 async function devolverDatosInicio() {
     const TotalReactivos = await reactivos.aggregate([
         {
+            $match: { status: true }
+        },
+        {
             $group: {
                 _id: null,
                 totalCantidad: { $sum: "$cantidad" }
@@ -17,6 +20,9 @@ async function devolverDatosInicio() {
     const TotalReactivosAgotados = await reactivos.aggregate([
         {
             $match: { cantidad: 0 }
+        },
+        {
+            $match: { status: true }
         },
         {
             $count: "totalCantidad"
