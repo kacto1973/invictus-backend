@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { equipos, reservas, mantenimientos } = require("./database/schemas");
+const { equipos } = require("./database/schemas");
 const { matchSorter } = require("match-sorter");
 
 /**
@@ -51,11 +51,18 @@ async function getEquipoDetails(id) {
         },
       },
     ]);
-    return equipoDetails;
+    return equipoDetails.length ? equipoDetails[0] : null;
   } catch (error) {
     console.error(error);
-    throw error;
+    throw new Error(
+      `Error al obtener datos del equipo con id ${id}: ${error.message}`
+    );
   }
 }
 
-module.exports = { getEquipos, getEquipoDetails };
+async function createEquipo(equipo) {
+  const nuevoEquipo = await equipos.create(equipo);
+  return nuevoEquipo;
+}
+
+module.exports = { getEquipos, getEquipoDetails, createEquipo };
