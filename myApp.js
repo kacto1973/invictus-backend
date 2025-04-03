@@ -106,6 +106,22 @@ app.get("/equipos/detalles", (req, res) => {
     });
 });
 
+app.post("/equipos", (req, res) => {
+  let equipo = req.body;
+  funciones
+    .createEquipo(equipo)
+    .then((equipo) => {
+      if (!equipo) {
+        res.status(500).json({ error: "El equipo no pudo ser creado" });
+      }
+      res.json({ message: "Equipo creado correctamente" });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ error: "Error al crear equipo" });
+    });
+});
+
 // Aqui inicia el servidor
 const listener = app.listen(process.env.PORT, () => {
   console.log("La API inicio en el puerto: " + listener.address().port);
