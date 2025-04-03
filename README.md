@@ -62,14 +62,14 @@ git push origin <nombre-de-tu-rama>
 ```
 
 
-> **Abre un Pull Request para revisión.**
+> **Abre un Pull Request para su revisión.**
 >
 
 <br>
 
 ## ¿Cómo trabajar en el proyecto?
 ### 1. Crear un modelo (si no existe)
-Define un modelo en la carpeta `models` usando Mongoose. Ejemplo:
+Define un modelo en la carpeta `/models` usando Mongoose. Ejemplo:
 ```javascript
 import mongoose from "mongoose";
 
@@ -86,7 +86,7 @@ export default Reactivo;
 ```
 
 ### 2. Crear una función en el controlador
-Define la lógica en un archivo dentro de la carpeta `controllers`. Ejemplo:
+Define la lógica en un archivo dentro de la carpeta `/controllers`. Ejemplo:
 ```javascript
 import Reactivo from "../models/reactivos/Reactivo.js";
 
@@ -113,7 +113,7 @@ export { consultarReactivos, crearReactivo };
 ```
 
 ### 3. Definir una ruta
-Crea un archivo en la carpeta `route` para definir las rutas relacionadas con el modelo. Ejemplo:
+Crea un archivo en la carpeta `/route` para definir las rutas relacionadas con el modelo. Ejemplo:
 ```javascript
 import express from "express";
 const router = express.Router();
@@ -150,7 +150,7 @@ app.listen(PORT, () => {
 
 ### 5. Probar las rutas
 Puedes usar alguna herramienta como Postman para probar las rutas:
-```javascript
+```
 GET /api/reactivos: Consultar todos los reactivos.
 POST /api/reactivos/crearReactivo: Crear un nuevo reactivo.
 ```
