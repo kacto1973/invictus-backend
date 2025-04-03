@@ -125,7 +125,7 @@ router.post("/crearReactivo", crearReactivo);
 export default router;
 ```
 
-### 4. Importar el controlador y anexar el router al `index.js`
+### 4. Anexar el router al `index.js`
 Importa las rutas en el archivo principal `index.js` y configúralas en el servidor. Ejemplo:
 ```javascript
 import express from "express";
