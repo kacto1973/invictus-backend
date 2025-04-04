@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const notificacionSchema = new mongoose.Schema({
     idTipoNotificacion: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'TipoNotificacion',
+      ref: "TipoNotificacion",
       required: true
     },
     idEstadoNotificacion: {
@@ -25,10 +25,12 @@ const notificacionSchema = new mongoose.Schema({
     },
     fechaGeneracion: {
       type: Date,
-      default: Date.now
+      default: Date.now,
+      required: true
     },
     status: {
       type: Boolean,
+      default: true,
       required: true
     }
 });

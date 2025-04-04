@@ -4,7 +4,7 @@ const estadoNotificacionSchema = new mongoose.Schema({
     nombre: {
         type: String,
         required: true,
-        enum: ["leido", "noLeido", "eliminado"]
+        unique: true
     }
 })
 

@@ -4,7 +4,7 @@ const estadoFisicoSchema = new mongoose.Schema({
     nombre: {
         type: String,
         required: true,
-        enum: ["solido", "liquido"]
+        unique: true
     }
 });
 

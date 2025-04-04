@@ -4,7 +4,7 @@ const unidadMedidaSchema = new mongoose.Schema({
     nombre: {
         type: String,
         required: true,
-        enum: ["l", "ml", "kg", "g", "mg"]
+        unique: true
     }
 });
 

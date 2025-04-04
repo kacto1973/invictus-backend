@@ -6,14 +6,24 @@ const mantenimientoSchema = new mongoose.Schema({
         ref: 'Equipo',
         required: true
       },
-      fechaInicio: {
+      fechaMantenimiento: {
         type: Date,
+        default: Date.now,
         required: true
       },
-      fechaFin: {
-        type: Date,
+      descripcion: {
+        type: String,
         required: true
       },
+      proximoMantenimiento: {
+        type: Date,
+        required: false
+      },
+      status: {
+        type: Boolean,
+        default: true,
+        required: true
+      }
 });
 
 const Mantenimiento = mongoose.model('Mantenimiento', mantenimientoSchema);

@@ -35,12 +35,9 @@ const reactivoSchema = new mongoose.Schema({
         required: true
     },
     status: {
-        type: String,
-    },
-    presentacion: {
-        type: Number,
-        required: true,
-        min: 0
+        type: Boolean,
+        default: true,
+        required: true
     }
 });
 

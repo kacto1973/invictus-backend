@@ -12,14 +12,16 @@ const reporteSchema = new mongoose.Schema({
       },
       fechaGeneracion: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        required: true
       },
       urlReporte: {
         type: String,
         required: true
       },
       status: {
-        type: String,
+        type: Boolean,
+        default: true,
         required: true
       }
 });

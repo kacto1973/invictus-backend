@@ -22,7 +22,8 @@ const movimientoReactivoSchema = new mongoose.Schema({
     },
     fecha: {
       type: Date,
-      default: Date.now
+      default: Date.nowm,
+      required: true
     }
 });
 

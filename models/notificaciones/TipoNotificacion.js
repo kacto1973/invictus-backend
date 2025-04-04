@@ -4,7 +4,7 @@ const tipoNotificacionSchema = new mongoose.Schema({
     nombre: {
         type: String,
         required: true,
-        enum: ["reactivoAgotado", "equipoCalendarizado", "actualmenteEnMantenimiento"]
+        unique: true
       }
 })
 

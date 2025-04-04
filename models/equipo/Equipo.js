@@ -13,7 +13,7 @@ const equipoSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    requiereServicio: {
+    requiereMantenimiento: {
       type: Boolean,
       required: true
     },

@@ -6,14 +6,28 @@ const reservaSchema = new mongoose.Schema({
         ref: 'Equipo',
         required: true
       },
+      persona: {
+        type: String,
+        required: true
+      },
       fechaInicio: {
         type: Date,
+        default: Date.now,
         required: true
       },
       fechaFin: {
         type: Date,
-        required: true
+        required: false
       },
+      fechaAplazamiento: {
+        type: Date,
+        required: false
+      },
+      status: {
+        type: Boolean,
+        default: true,
+        required: true
+      }
 });
 
 const Reserva = mongoose.model('Reserva', reservaSchema);
