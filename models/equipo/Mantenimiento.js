@@ -6,9 +6,13 @@ const mantenimientoSchema = new mongoose.Schema({
         ref: 'Equipo',
         required: true
       },
-      fechaMantenimiento: {
+      fechaInicio: {
         type: Date,
         default: Date.now,
+        required: true
+      },
+      fechaFin: {
+        type: Date,
         required: true
       },
       descripcion: {
