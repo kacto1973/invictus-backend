@@ -7,8 +7,7 @@
 	"scripts": {
 		"start": "node index.js",
 		"dev": "nodemon index.js",
-		"testCreate": "node functions/database/testCreate.js",
-		"testDelete": "node functions/database/testDelete.js"
+		"seed": "node utils/runSeeds.js"
 	},
 	"dependencies": {
 		"body-parser": "^2.2.0",
