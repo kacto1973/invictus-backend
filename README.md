@@ -14,6 +14,8 @@
     │   └── ...
     ├── routes/
     │   └── ...
+    ├── seeds/
+    │   └── ...
     └── utils/
     │   └── ...
     ├── .env-template
@@ -30,6 +32,7 @@
 * `middleware/`: Contiene middlewares personalizados.
 * `models/`: Define los modelos y esquemas de la base de datos.
 * `routes/`: Define los endpoints del proyecto.
+* `seeds/`: Contiene scripts para insertar datos iniciales o de prueba en la base de datos.
 * `utils/`: Contiene métodos auxiliares y utilidades.
 
 <br>
@@ -154,6 +157,61 @@ Puedes usar alguna herramienta como Postman para probar las rutas:
 GET /api/reactivos: Consultar todos los reactivos.
 POST /api/reactivos/crearReactivo: Crear un nuevo reactivo.
 ```
+
+<br>
+
+## ¿Cómo migrar con información la base de datos?
+La migración de datos iniciales o de prueba se realiza mediante los scripts de seeds ubicados en la carpeta `/seeds`. Estos scripts permiten poblar la base de datos con información esencial para el funcionamiento del sistema, como tipos de notificación, marcas y unidades de medida, entre otros.
+
+### 1. Crear un script de seed
+Crea un nuevo archivo en la carpeta `/seeds` con un nombre descriptivo. Por ejemplo: `seedUnidadMedida.js`
+
+```javascript
+import conectarDB from '../config/db.js';
+import UnidadMedida from '../models/reactivos/UnidadMedida.js';
+
+const seedUnidadMedida = async () => {
+    try {
+        await conectarDB(); // Conectar a la base de datos
+        await UnidadMedida.deleteMany(); // Limpiar la colección
+
+        // Datos de ejemplo
+        const unidadesMedida = [
+            { nombre: 'l' },
+            { nombre: 'ml' },
+            { nombre: 'kg' },
+            { nombre: 'g' },
+            { nombre: 'mg' },
+        ];
+
+        await UnidadMedida.insertMany(unidadesMedida);
+        console.log('Unidades de medida sembradas exitosamente');
+    } catch (error) {
+        console.error('Error al sembrar la base de datos:', error.message);
+        throw error;
+    }
+}
+
+export default seedUnidadMedida;
+```
+
+### 2. Ejecutar los script de seed
+En el archivo `package.json` está definido el siguiente script:
+```
+"scripts"{
+    ...
+    "seed": "node utils/runSeeds.js"
+    ...
+}
+```
+
+Usa el siguiente comando en la terminal:
+```
+npm run seed
+```
+
+### 3. Verificar los datos
+Después de ejecutar el script, verifica que los datos se hayan insertado correctamente. Puedes hacerlo consultado tu API o utilizando una herramienta como _MongoDB Compass_ o _Postman_ para comprobar que la información esté disponible.
 
 <br>
 
