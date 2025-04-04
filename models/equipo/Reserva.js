@@ -17,7 +17,7 @@ const reservaSchema = new mongoose.Schema({
       },
       fechaFin: {
         type: Date,
-        required: false
+        required: true
       },
       fechaAplazamiento: {
         type: Date,
