@@ -1,0 +1,33 @@
+{
+	"name": "invictus_api",
+	"version": "0.0.1",
+	"type": "module",
+	"description": "Proyecto Rest API para la aplicacion de Invictus",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js",
+		"dev": "nodemon index.js",
+		"seed": "node utils/runSeeds.js"
+	},
+	"dependencies": {
+		"body-parser": "^2.2.0",
+		"cors": "^2.8.5",
+		"dotenv": "^16.4.7",
+		"express": "^4.16.4",
+		"mongodb": "^6.15.0",
+		"mongoose": "^8.13.1",
+		"node": "^23.11.0"
+	},
+	"repository": {
+		"url": "https://github.com/kacto1973/invictus-backend"
+	},
+	"keywords": [
+		"node",
+		"express",
+		"mongoose",
+		"api"
+	],
+	"devDependencies": {
+		"nodemon": "^3.1.9"
+	}
+}
