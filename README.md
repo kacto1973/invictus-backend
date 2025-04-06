@@ -1,5 +1,3 @@
-# Opcion de Estructura 2
-
 ## Estructura del proyecto
 
 ```bash
@@ -119,12 +117,10 @@ const crearReactivo = async (req, res) => {
   try {
     const reactivo = new Reactivo(req.body);
     const reactivoGuardado = await reactivo.save();
-    res
-      .status(201)
-      .json({
-        message: "Reactivo creado exitosamente",
-        reactivo: reactivoGuardado,
-      });
+    res.status(201).json({
+      message: "Reactivo creado exitosamente",
+      reactivo: reactivoGuardado,
+    });
   } catch (error) {
     res.status(500).json({ error: "Error al crear el reactivo" });
   }
