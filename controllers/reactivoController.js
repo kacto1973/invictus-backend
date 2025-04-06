@@ -1,27 +1,44 @@
 import { Reactivo, Gabinete, Marca, UnidadMedida, EstadoFisico } from '../models/index.js';
+import { matchSorter } from 'match-sorter';
 
 const consultarReactivos = async (req, res) => {
     try {
-        // Obtener los reactivos de la base de datos
-        const reactivos = await Reactivo.find({ status: true })
+        // Parametro de filtrado
+        const { nombre } = req.query;        
+
+        // Obtener reactivos de la base de datos
+        const reactivos = await Reactivo.find({})
             .select('-__v')
             .populate('idGabinete', 'nombre -_id')
             .populate('idMarca', 'nombre -_id')
             .populate('idUnidadMedida', 'nombre -_id')
-            .populate('estadoFisico', 'nombre -_id');
+            .populate('estadoFisico', 'nombre -_id')
+            .lean(); // Convertir documentos a objetos simples
 
         // Validaciones
         if (!reactivos || reactivos.length === 0) {
             return res.status(404).json({ message: 'No se encontraron reactivos' });
         }
 
+        // Filtrar reactivos
+        const reactivosFiltrados = nombre
+            ? matchSorter(reactivos, nombre.trim(), {
+                  keys: ['nombre'],
+                  threshold: matchSorter.rankings.STARTS_WITH,
+              })
+            : reactivos;
+
+        if (reactivosFiltrados.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron reactivos con ese nombre' });
+        }
+
         // Respuesta
-        res.status(200).json(reactivos);
+        res.status(200).json(reactivosFiltrados);
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Error al consultar los reactivos' });
     }
-}
+};
 
 const consultarReactivoPorId = async (req, res) => {
     try {
