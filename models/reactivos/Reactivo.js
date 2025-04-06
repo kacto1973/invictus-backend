@@ -16,9 +16,9 @@ const reactivoSchema = new mongoose.Schema({
         ref: 'UnidadMedida', 
         required: true
     },
-    estadoFisico: {
+    categoria: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'EstadoFisico', 
+        ref: 'Categoria', 
         required: true
     },
     nombre: {

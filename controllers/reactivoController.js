@@ -1,4 +1,4 @@
-import { Reactivo, Gabinete, Marca, UnidadMedida, EstadoFisico } from '../models/index.js';
+import { Reactivo, Gabinete, Marca, UnidadMedida, Categoria } from '../models/index.js';
 import { matchSorter } from 'match-sorter';
 
 const consultarReactivos = async (req, res) => {
@@ -12,7 +12,7 @@ const consultarReactivos = async (req, res) => {
             .populate('idGabinete', 'nombre -_id')
             .populate('idMarca', 'nombre -_id')
             .populate('idUnidadMedida', 'nombre -_id')
-            .populate('estadoFisico', 'nombre -_id')
+            .populate('categoria', 'nombre -_id')
             .lean(); // Convertir documentos a objetos simples
 
         // Validaciones
@@ -56,7 +56,7 @@ const consultarReactivoPorId = async (req, res) => {
             .populate('idGabinete', 'nombre -_id')
             .populate('idMarca', 'nombre -_id')
             .populate('idUnidadMedida', 'nombre -_id')
-            .populate('estadoFisico', 'nombre -_id');
+            .populate('categoria', 'nombre -_id');
 
         // Validaciones
         if (!reactivo) {
@@ -77,7 +77,7 @@ const crearReactivo = async (req, res) => {
         const reactivo = new Reactivo(req.body);
         
         // Validaciones
-        if (!reactivo.idGabinete || !reactivo.idMarca || !reactivo.idUnidadMedida || !reactivo.estadoFisico) {
+        if (!reactivo.idGabinete || !reactivo.idMarca || !reactivo.idUnidadMedida || !reactivo.categoria) {
             return res.status(400).json({ message: 'Faltan datos requeridos para crear el reactivo' });
         }
                 
@@ -96,9 +96,9 @@ const crearReactivo = async (req, res) => {
             return res.status(404).json({ message: 'Unidad de medida no encontrada' });
         }
         
-        const estadoFisicoExistente = await EstadoFisico.findById(reactivo.estadoFisico);
-        if (!estadoFisicoExistente) {
-            return res.status(404).json({ message: 'Estado físico no encontrado' });
+        const categoriaExistente = await Categoria.findById(reactivo.categoria);
+        if (!categoriaExistente) {
+            return res.status(404).json({ message: 'Categoría no encontrada' });
         }
         
         if (reactivo.cantidad < 0) {
@@ -145,10 +145,10 @@ const actualizarReactivo = async (req, res) => {
             }
         }
 
-        if (req.body.estadoFisico) {
-            const estadoFisicoExistente = await EstadoFisico.findById(req.body.estadoFisico);
-            if (!estadoFisicoExistente) {
-                return res.status(404).json({ message: 'Estado físico no encontrado' });
+        if (req.body.categoria) {
+            const categoriaExistente = await Categoria.findById(req.body.categoria);
+            if (!categoriaExistente) {
+                return res.status(404).json({ message: 'Categoria no encontrada' });
             }
         }
 
@@ -162,7 +162,7 @@ const actualizarReactivo = async (req, res) => {
             idGabinete: req.body.idGabinete || reactivo.idGabinete,
             idMarca: req.body.idMarca || reactivo.idMarca,
             idUnidadMedida: req.body.idUnidadMedida || reactivo.idUnidadMedida,
-            estadoFisico: req.body.estadoFisico || reactivo.estadoFisico,
+            categoria: req.body.categoria || reactivo.categoria,
             nombre: req.body.nombre || reactivo.nombre,
             esPeligroso: req.body.esPeligroso || reactivo.esPeligroso,
             cantidad: req.body.cantidad || reactivo.cantidad,
