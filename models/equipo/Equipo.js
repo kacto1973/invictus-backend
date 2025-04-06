@@ -21,7 +21,7 @@ const equipoSchema = new mongoose.Schema({
       type: Boolean,
       required: true
     }
-});
+}, { collection: 'Equipo' });
 
 const Equipo = mongoose.model('Equipo', equipoSchema);
 export default Equipo;

@@ -28,7 +28,7 @@ const reservaSchema = new mongoose.Schema({
         default: true,
         required: true
       }
-});
+}, { collection: 'Reserva' });
 
 const Reserva = mongoose.model('Reserva', reservaSchema);
 export default Reserva;

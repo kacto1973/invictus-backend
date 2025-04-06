@@ -6,7 +6,7 @@ const tipoEstadoSchema = new mongoose.Schema({
         unique: true,
         required: true
     }
-});
+}, { collection: 'TipoEstado' });
 
 const TipoEstado = mongoose.model('TipoEstado', tipoEstadoSchema);
 export default TipoEstado;

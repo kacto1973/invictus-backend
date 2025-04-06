@@ -28,7 +28,7 @@ const mantenimientoSchema = new mongoose.Schema({
         default: true,
         required: true
       }
-});
+}, { collection: 'Mantenimiento' });
 
 const Mantenimiento = mongoose.model('Mantenimiento', mantenimientoSchema);
 export default Mantenimiento;

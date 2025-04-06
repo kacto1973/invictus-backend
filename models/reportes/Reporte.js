@@ -24,7 +24,7 @@ const reporteSchema = new mongoose.Schema({
         default: true,
         required: true
       }
-});
+}, { collection: 'Reporte' });
 
 const Reporte = mongoose.model('Reporte', reporteSchema);
 export default Reporte;

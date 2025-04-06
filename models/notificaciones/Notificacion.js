@@ -33,7 +33,7 @@ const notificacionSchema = new mongoose.Schema({
       default: true,
       required: true
     }
-});
+}, { collection: 'Notificacion' });
 
 const Notificacion = mongoose.model('Notificacion', notificacionSchema);
 export default Notificacion;

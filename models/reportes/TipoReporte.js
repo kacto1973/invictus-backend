@@ -6,7 +6,7 @@ const tipoReporteSchema = new mongoose.Schema({
         required: true,
         unique: true
     }
-});
+}, { collection: 'TipoReporte' });
 
 const TipoReporte = mongoose.model('TipoReporte', tipoReporteSchema);
 export default TipoReporte;

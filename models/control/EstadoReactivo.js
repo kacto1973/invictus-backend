@@ -20,7 +20,7 @@ const estadoReactivoSchema = new mongoose.Schema({
       default: Date.now,
       required: true
     },
-});
+}, { collection: 'EstadoReactivo' });
    
 const EstadoReactivo = mongoose.model('EstadoReactivo', estadoReactivoSchema);
 export default EstadoReactivo;

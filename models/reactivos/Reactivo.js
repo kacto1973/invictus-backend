@@ -39,7 +39,7 @@ const reactivoSchema = new mongoose.Schema({
         default: true,
         required: true
     }
-});
+}, { collection: 'Reactivo' });
 
 const Reactivo = mongoose.model('Reactivo', reactivoSchema);
 export default Reactivo;
