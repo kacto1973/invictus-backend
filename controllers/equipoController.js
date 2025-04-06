@@ -1,31 +1,36 @@
-const mongoose = require("mongoose");
-const { equipos } = require("./database/schemas");
-const { matchSorter } = require("match-sorter");
+import mongoose from "mongoose";
+import Equipo from "../models/equipo/Equipo";
+import { matchSorter } from "match-sorter";
 
-/**
- * obtiene una lista de todos los equipos y opcionalmente filtra los resultados según un query
- *
- * @async
- * @param {string} [query] - query opcional para filtrar los equipos por nombre
- * @returns {Promise<Array>} - lista de equipos, si se pasa un query la lista contendrá solo los elementos que coinciden
- */
-async function getEquipos(query) {
-  let equiposList = await equipos.find().select("_id nombre urlImagen status");
-  if (query) equiposList = matchSorter(equiposList, query);
-
-  return equiposList;
-}
-
-/**
- * obtiene los detalles de un equipo a partir de su id
- *
- * @async
- * @param {string} id - el id principal del equipo, generado automaticamente por mongodb en el campo _id
- * @returns {Promise<Object|null>} - objeto que contiene _id,nombre,descripción,urlImagen,requiereServicio, status, mantenimientos y reservas del equipo
- */
-async function getEquipoDetails(id) {
+const getEquipos = async (req, res) => {
   try {
-    const equipoDetails = await equipos.aggregate([
+    let query = req.query.name;
+
+    let equipos = await Equipo.find().select("_id nombre urlImagen status");
+    if (query) equipos = matchSorter(equipos, query);
+
+    if (!equipos) {
+      return res.status(404).json({ error: "No se encontró ningún equipo" });
+    }
+    return res.json(equipos);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Error al obtener equipos" });
+  }
+};
+
+const getEquipoDetails = async (req, res) => {
+  try {
+    let id = req.query.id;
+
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+      return res.status(500).json({
+        error:
+          "El parámetro id debe tener una longitud de 24 caracteres hexadecimales",
+      });
+    }
+
+    const equipoDetails = await Equipo.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
       {
         $lookup: {
@@ -51,18 +56,32 @@ async function getEquipoDetails(id) {
         },
       },
     ]);
-    return equipoDetails.length ? equipoDetails[0] : null;
+    if (!equipoDetails.length) {
+      return res.status(404).json({ error: "El equipo no existe" });
+    }
+    return res.json(equipoDetails[0]);
   } catch (error) {
     console.error(error);
-    throw new Error(
-      `Error al obtener datos del equipo con id ${id}: ${error.message}`
-    );
+    return res
+      .status(500)
+      .json({ error: "Error al obtener detalles del equipo" });
   }
-}
+};
 
-async function createEquipo(equipo) {
-  const nuevoEquipo = await equipos.create(equipo);
-  return nuevoEquipo;
-}
+const createEquipo = async (req, res) => {
+  try {
+    let equipo = req.body;
 
-module.exports = { getEquipos, getEquipoDetails, createEquipo };
+    const nuevoEquipo = await Equipo.create(equipo);
+
+    if (!nuevoEquipo) {
+      return res.status(500).json({ error: "El equipo no pudo ser creado" });
+    }
+    return res.json({ message: "Equipo creado correctamente" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Error al crear equipo" });
+  }
+};
+
+export { getEquipos, getEquipoDetails, createEquipo };
