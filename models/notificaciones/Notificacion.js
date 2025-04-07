@@ -18,6 +18,10 @@ const notificacionSchema = new mongoose.Schema({
     idEquipo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Equipo'
+    }, 
+    idMantenimiento: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Mantenimiento'
     },
     descripcion: {
       type: String,
