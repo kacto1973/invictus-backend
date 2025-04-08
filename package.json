@@ -17,8 +17,7 @@
 		"mongodb": "^6.15.0",
 		"match-sorter": "^8.0.0",
 		"mongoose": "^8.13.1",
-		"node": "^23.11.0",
-		"node-cron": "^3.0.3"
+		"node": "^23.11.0"
 	},
 	"repository": {
 		"url": "https://github.com/kacto1973/invictus-backend"
