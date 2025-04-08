@@ -12,35 +12,35 @@ const seedEquipos = async () => {
                 descripcion: "Microscopio con cámara integrada para análisis detallado",
                 urlImagen: "https://example.com/images/microscopio.jpg",
                 requiereMantenimiento: false,
-                status: true
+                status: "Liberado"
             },
             {
                 nombre: "Centrífuga de Laboratorio",
                 descripcion: "Equipo para separación de componentes por densidad",
                 urlImagen: "https://example.com/images/centrifuga.jpg",
                 requiereMantenimiento: true,
-                status: false
+                status: "Eliminado"
             },
             {
                 nombre: "Autoclave Estéril",
                 descripcion: "Esterilización a vapor de alta temperatura",
                 urlImagen: "https://example.com/images/autoclave.jpg",
                 requiereMantenimiento: true,
-                status: true
+                status: "Liberado"
             },
             {
                 nombre: "Analizador Bioquímico",
                 descripcion: "Equipo automatizado para análisis de muestras sanguíneas",
                 urlImagen: "https://example.com/images/analizador.jpg",
                 requiereMantenimiento: false,
-                status: true
+                status: "Liberado"
             },
             {
                 nombre: "Incubadora CO2",
                 descripcion: "Para cultivos celulares en ambiente controlado",
                 urlImagen: "https://example.com/images/incubadora.jpg",
                 requiereMantenimiento: true,
-                status: true
+                status: "Liberado"
             }
         ];
 
