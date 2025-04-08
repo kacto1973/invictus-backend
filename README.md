@@ -1,6 +1,3 @@
-# Opcion de Estructura 2
-
-
 ## Estructura del proyecto
 ```bash
 └── invictus-backend/
