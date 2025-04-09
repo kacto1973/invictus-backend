@@ -4,8 +4,18 @@ import {
   getEquipos,
   getEquipoDetails,
   createEquipo,
-} from "../controllers/equipoController";
+  updateEquipo,
+  deleteEquipo,
+  createReserva,
+  createMantenimiento,
+} from "../controllers/equipoController.js";
 
-router.get("/equipos", getEquipos);
-router.get("/equipos/detalles", getEquipoDetails);
-router.post("/equipos", createEquipo);
+router.get("/", getEquipos);
+router.get("/detalles", getEquipoDetails);
+router.post("/", createEquipo);
+router.put("/", updateEquipo);
+router.delete("/", deleteEquipo);
+router.post("/reserva", createReserva);
+router.post("/mantenimiento", createMantenimiento);
+
+export default router;
