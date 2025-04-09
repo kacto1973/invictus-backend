@@ -2,6 +2,16 @@ import Reactivo from '../models/reactivos/Reactivo.js';
 import MovimientoReactivo from '../models/movimientos/MovimientoReactivo.js';
 
 async function datosInicio() {
+    /**
+     Envia los datos necesarios para la vista de inicio.
+     Incluye:
+        - Total de reactivos
+        - Total de reactivos agotados
+        - Total de reactivos adquiridos
+        - Datos para la grafica de unidad de medida
+        - Datos para la grafica de estado fisico
+     @returns {JSON} - Objeto con los datos necesarios para la vista de inicio.
+     */
     const TotalReactivos = await Reactivo.aggregate([
         {
             $match: { status: true }

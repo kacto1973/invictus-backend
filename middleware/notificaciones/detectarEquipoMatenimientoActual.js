@@ -53,10 +53,9 @@ const observarMantenimientos = () => {
                 const mantenimiento = await Mantenimiento.findById(notificacion.idMantenimiento);
 
                 if (mantenimiento && mantenimiento.fechaFin < now) {
-                    await Notificacion.findByIdAndUpdate(notificacion._id, {status: false});
+                    await Notificacion.findByIdAndDelete(notificacion._id);
                     await Mantenimiento.findByIdAndUpdate(mantenimiento._id, {status: false});
-                    console.log(`Notificación del equipo ${notificacion.idEquipo} se le cambio el status a false.
-                                Tambien se paso a false el mantenimiento ${mantenimiento._id}`);
+                    console.log(`Notificación del equipo ${notificacion.idEquipo} se elimino.\nTambien se paso a false el mantenimiento ${mantenimiento._id}`);
                 }
             }
         } catch (error) {
