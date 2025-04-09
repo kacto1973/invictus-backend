@@ -14,9 +14,10 @@
 		"cors": "^2.8.5",
 		"dotenv": "^16.4.7",
 		"express": "^4.16.4",
-		"mongodb": "^6.15.0",
 		"match-sorter": "^8.0.0",
+		"mongodb": "^6.15.0",
 		"mongoose": "^8.13.1",
+		"multer": "^1.4.5-lts.2",
 		"node": "^23.11.0"
 	},
 	"repository": {
