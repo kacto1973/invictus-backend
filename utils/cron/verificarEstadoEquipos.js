@@ -1,7 +1,7 @@
 import cron from "node-cron";
-import Equipo from "../models/equipo/Equipo";
-import Reserva from "../models/equipo/Reserva";
-import Mantenimiento from "../models/equipo/Mantenimiento";
+import Equipo from "../../models/equipo/Equipo.js";
+import Reserva from "../../models/equipo/Reserva.js";
+import Mantenimiento from "../../models/equipo/Mantenimiento.js";
 
 /**
  * Verifica y actualiza el estado de cada equipo:
@@ -14,11 +14,11 @@ import Mantenimiento from "../models/equipo/Mantenimiento";
  * @returns {Promise<void>} solo actualiza los equipos en la base de datos
  */
 const verificarEstadoEquipos = async () => {
-  const hoy = new Date();
+  const hoy = new Date(new Date().setUTCHours(0, 0, 0, 0));
 
   try {
     // obtener todos los equipos
-    const equipos = await Equipo.find();
+    const equipos = await Equipo.find({ status: { $ne: "Eliminado" } });
 
     for (const equipo of equipos) {
       // verificar mantenimientos
@@ -49,7 +49,11 @@ const verificarEstadoEquipos = async () => {
         continue;
       }
 
-      if (!reservaActiva && !mantenimientoActivo) {
+      if (
+        !reservaActiva &&
+        !mantenimientoActivo &&
+        equipo.status !== "Liberado"
+      ) {
         await Equipo.findByIdAndUpdate(equipo._id, { status: "Liberado" });
         console.log(`Equipo con id ${equipo._id} liberado automáticamente`);
       }
