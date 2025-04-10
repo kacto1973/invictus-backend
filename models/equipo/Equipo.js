@@ -19,6 +19,7 @@ const equipoSchema = new mongoose.Schema({
   },
   status: {
     type: String,
+    enum: ["Liberado", "En mantenimiento", "En reserva", "Eliminado"],
     required: true,
   },
 });
