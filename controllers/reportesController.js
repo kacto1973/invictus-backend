@@ -20,109 +20,145 @@ const conseguirTodosLosReportes = async (req, res) => {
     }
 }
 
-async function crearGrafico(
-    graficaEntradasSalidas,
-    graficaCategoriasProductos
-) {
+async function insertarTablaConChequeo(doc, data) {
+    const espacioMinimo = 100;
+
+    if (doc.y + espacioMinimo >= doc.page.height - doc.page.margins.bottom) {
+        doc.addPage();
+    }
+
+    await doc.table(data);
+}
+
+async function crearGrafico(opcion) {
+    // graficaEntradasSalidas     = 1
+    // graficaCategoriasReactivos = 2
+    // graficaReactivosAgotados   = 3
+    // graficaUsodeEquipos        = 4
+    // graficaServicioEquipos     = 5
+
     const width = 600;
     const height = 400;
     const chartCanvas  = new ChartJSNodeCanvas({ width, height });
 
     let config;
 
-    if (graficaEntradasSalidas) {
+    switch (opcion) {
+        case 1: {
+            const movimientos = await MovimientoReactivo
+                .find()
+                .populate("idReactivo")
+                .populate("idTipoMovimiento");
 
-        const movimientos = await MovimientoReactivo
-            .find()
-            .populate("idReactivo")
-            .populate("idTipoMovimiento");
+            let totalEntradas = 0;
+            let totalSalidas = 0;
 
-        let totalEntradas = 0;
-        let totalSalidas = 0;
+            movimientos.forEach(mov => {
+                const tipo = mov.idTipoMovimiento.nombre;
+                if (tipo === 'Entrada') {
+                    totalEntradas += mov.cantidad;
+                } else if (tipo === 'Salida') {
+                    totalSalidas += mov.cantidad;
+                }
+            });
 
-        movimientos.forEach(mov => {
-            const tipo = mov.idTipoMovimiento.nombre;
-            if (tipo === 'Entrada') {
-                totalEntradas += mov.cantidad;
-            } else if (tipo === 'Salida') {
-                totalSalidas += mov.cantidad;
-            }
-        });
-
-        config = {
-            type: 'pie',
-            data: {
-                labels: [
-                    `Entradas (${totalEntradas})`,
-                    `Salidas (${totalSalidas})`
-                ],
-                datasets: [{
-                    label: 'Movimientos de Reactivos',
-                    data: [totalEntradas, totalSalidas],
-                    backgroundColor: ['#4CAF50', '#F44336'],
-                }]
-            },
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Porcentaje de Movimientos de Reactivos',
-                        font: {
-                            size: 18
-                        }
-                    },
-                    legend: {
-                        position: 'bottom',
-                        labels: {
+            config = {
+                type: 'pie',
+                data: {
+                    labels: [
+                        `Entradas (${totalEntradas})`,
+                        `Salidas (${totalSalidas})`
+                    ],
+                    datasets: [{
+                        label: 'Movimientos de Reactivos',
+                        data: [totalEntradas, totalSalidas],
+                        backgroundColor: ['#4CAF50', '#F44336'],
+                    }]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Porcentaje de Movimientos de Reactivos',
                             font: {
-                                size: 14
+                                size: 18
                             }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                const label = context.label || '';
-                                const value = context.raw || 0;
-                                return `${label}: ${value}`;
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    return `${label}: ${value}`;
+                                }
                             }
                         }
                     }
                 }
-            }
-        };
+            };
 
-    } else if (graficaCategoriasProductos) {
-
-        // Codigo
-
+            break;
+        }
     }
 
     return await chartCanvas.renderToBuffer(config);
 
 }
 
-async function crearTabla(
-    listadoCompletoReactivos,
-    // listadoProductosConDefectos,
-    listaEntradasYSalidas
-){
-
+async function crearTabla(opcion){
+    // listadoReactivos        = 1
+    // listadoEntradasSalidas  = 2
+    // listadoEquipos          = 3
+    // listadoServicios        = 4
+    // listadoUsos             = 5
     let table;
 
-    if (listadoCompletoReactivos){
-        const reactivos = await Reactivo.find()
-            .populate("idUnidadMedida")
-            .populate("estadoFisico")
-            .populate("idMarca")
-            .populate("idGabinete");
+    switch (opcion) {
+        case 1: {
+            const reactivos = await Reactivo.find({status: true})
+                .populate("idUnidadMedida")
+                .populate("estadoFisico")
+                .populate("idMarca")
+                .populate("idGabinete");
 
-        table = {
-            title: '',
-            headers: [],
-            datas: [ /* complex data */ ],
-            rows: [ /* or simple data */ ],
-        };
+            let datos = [];
+
+            reactivos.forEach(rea => {
+                datos.push([
+                    rea.nombre,
+                    rea.idGabinete.nombre,
+                    rea.idMarca.nombre,
+                    rea.idUnidadMedida.nombre,
+                    rea.estadoFisico.nombre,
+                    rea.esPeligroso,
+                    rea.cantidad
+                ]);
+            })
+
+            table = {
+                title: 'Lista Completa de Reactivos',
+                headers: [
+                    "Nombre",
+                    "Gabinete",
+                    "Marca",
+                    "Unidad",
+                    "Estado Fisico",
+                    "¿Es peligroso?",
+                    "Cantidad"
+                ],
+                rows: datos
+            };
+
+            break;
+        }
     }
 
     return table;
@@ -131,23 +167,45 @@ async function crearTabla(
 const crearReporte = async (req, res) => {
     try {
         const {
-            listadoCompletoReactivos,
-            // listadoProductosConDefectos,
-            listaEntradasYSalidas,
+            listadoReactivos,
+            listadoEntradasSalidas,
+            listadoEquipos,
+            listadoServicios,
+            listadoUsos,
+            graficaCategoriasReactivos,
             graficaEntradasSalidas,
-            graficaCategoriasProductos,
-            // graficaPorcentajeReactivosDefectuosos,
-            // graficaPorcentajeTiposDefectos,
-            // graficaTendenciaDefectos,
+            graficaReactivosAgotados,
+            graficaUsodeEquipos,
+            graficaServicioEquipos,
         } = req.body;
 
         const doc = new PDFDocument();
 
-
-
-        if (listadoCompletoReactivos) {
-
+        // Aqui se agregaran las tablas del PDF
+        let tablas = [];
+        // Le pregunte al chat si habia una manera mejor de hacer esto y solio me
+        // dio opciones que consumen mas recursos
+        if (listadoReactivos) {
+            const tabla = await crearTabla(1);
+            tablas.push(tabla);
         }
+        if (listadoEntradasSalidas) {
+            const tabla = await crearTabla(2);
+            tablas.push(tabla);
+        }
+        if (listadoEquipos) {
+            const tabla = await crearTabla(3);
+            tablas.push(tabla);
+        }
+        if (listadoServicios) {
+            const tabla = await crearTabla(4);
+            tablas.push(tabla);
+        }
+        if (listadoUsos) {
+            const tabla = await crearTabla(5);
+            tablas.push(tabla);
+        }
+        
 
     } catch (error) {
         console.error(error);
