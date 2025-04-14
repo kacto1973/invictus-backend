@@ -21,6 +21,11 @@ const reactivoSchema = new mongoose.Schema({
         ref: 'EstadoFisico', 
         required: true
     },
+    idCategoria: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Categoria', 
+        required: true
+    },
     nombre: {
         type: String,
         required: true
