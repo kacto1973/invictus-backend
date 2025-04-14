@@ -24,7 +24,7 @@ const reactivoSchema = new mongoose.Schema({
     idCategoria: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Categoria', 
-        required: true
+        required: false // Lo pongo false debido a que se menciona en los requerimientos que puede ser vacio
     },
     nombre: {
         type: String,
