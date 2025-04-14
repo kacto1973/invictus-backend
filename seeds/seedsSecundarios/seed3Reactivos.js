@@ -4,6 +4,7 @@ import Reactivo from "../../models/reactivos/Reactivo.js";
 import Gabinete from "../../models/reactivos/Gabinete.js";
 import UnidadMedida from "../../models/reactivos/UnidadMedida.js";
 import EstadoFisico from "../../models/reactivos/EstadoFisico.js";
+import Categoria from "../../models/reactivo/Categoria.js";
 
 const seedReactivos = async () => {
     try {
@@ -14,6 +15,7 @@ const seedReactivos = async () => {
         const marcas = await Marca.find();
         const unidades = await UnidadMedida.find();
         const estados = await EstadoFisico.find();
+        const categorias = await Categoria.find();
 
         const getIdByName = (array, nombre) => {
             const obj = array.find(item => item.nombre === nombre);
@@ -26,6 +28,7 @@ const seedReactivos = async () => {
                 esPeligroso: true,
                 cantidad: 500,
                 gabinete: "Gabinete 1",
+                categoria: "Ácidos y Bases",
                 marca: "SIGMA",
                 unidad: "l",
                 estado: "Liquido"
@@ -35,6 +38,7 @@ const seedReactivos = async () => {
                 esPeligroso: true,
                 cantidad: 1000,
                 gabinete: "Gabinete 2",
+                categoria: "Solventes",
                 marca: "Bio-Rad",
                 unidad: "ml",
                 estado: "Liquido"
@@ -44,6 +48,7 @@ const seedReactivos = async () => {
                 esPeligroso: false,
                 cantidad: 200,
                 gabinete: "Gabinete 3",
+                categoria: "Sales Inorgánicas",
                 marca: "GOLDEN BELL",
                 unidad: "kg",
                 estado: "Solido"
@@ -53,6 +58,7 @@ const seedReactivos = async () => {
                 esPeligroso: true,
                 cantidad: 150,
                 gabinete: "Gabinete 4",
+                categoria: "Sales Inorgánicas",
                 marca: "J.T. Baker",
                 unidad: "g",
                 estado: "Solido"
@@ -62,6 +68,7 @@ const seedReactivos = async () => {
                 esPeligroso: false,
                 cantidad: 300,
                 gabinete: "Gabinete 5",
+                categoria: "Sales Inorgánicas",
                 marca: "VETEC",
                 unidad: "mg",
                 estado: "Solido"
@@ -71,6 +78,7 @@ const seedReactivos = async () => {
                 esPeligroso: true,
                 cantidad: 750,
                 gabinete: "Gabinete 6",
+                categoria: "Solventes",
                 marca: "FAGA LAB",
                 unidad: "ml",
                 estado: "Liquido"
@@ -80,6 +88,7 @@ const seedReactivos = async () => {
                 esPeligroso: false,
                 cantidad: 1000,
                 gabinete: "Gabinete 7",
+                categoria: "Sales Inorgánicas",
                 marca: "NutriCology",
                 unidad: "g",
                 estado: "Solido"
@@ -89,6 +98,7 @@ const seedReactivos = async () => {
                 esPeligroso: false,
                 cantidad: 1200,
                 gabinete: "Gabinete 8",
+                categoria: "Reactivos Químicos",
                 marca: "PIERCE",
                 unidad: "ml",
                 estado: "Liquido"
@@ -98,6 +108,7 @@ const seedReactivos = async () => {
                 esPeligroso: false,
                 cantidad: 50,
                 gabinete: "Gabinete 9",
+                categoria: "Medios de Cultivo",
                 marca: "Molecular Bioproducts",
                 unidad: "kg",
                 estado: "Solido"
@@ -107,11 +118,13 @@ const seedReactivos = async () => {
                 esPeligroso: false,
                 cantidad: 0,
                 gabinete: "Cubiculo Dra. Mayra",
+                categoria: "Sales Inorgánicas",
                 marca: "ALDRICH",
                 unidad: "mg",
                 estado: "Solido"
             }
         ];
+
 
         for (const item of reactivos) {
             const nuevoReactivo = new Reactivo({
@@ -119,6 +132,7 @@ const seedReactivos = async () => {
                 esPeligroso: item.esPeligroso,
                 cantidad: item.cantidad,
                 idGabinete: getIdByName(gabinetes, item.gabinete),
+                idCategoria: getIdByName(categorias, item.categoria),
                 idMarca: getIdByName(marcas, item.marca),
                 idUnidadMedida: getIdByName(unidades, item.unidad),
                 estadoFisico: getIdByName(estados, item.estado),
