@@ -1,5 +1,5 @@
 import conectarDB from "../../config/db.js";
-import Categoria from "../../models/reactivo/Categoria.js";
+import Categoria from "../../models/reactivos/Categoria.js";
 
 const seedCategorias = async () => {
     try {
