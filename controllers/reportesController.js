@@ -15,7 +15,7 @@ import Categoria from "../models/reactivos/Categoria.js";
 import dayjs from "dayjs";
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore.js';
 import Reporte from "../models/reportes/Reporte.js";
-import TipoReporte from "../models/reportes/TipoReporte.js";
+import EstadoReporte from "../models/reportes/EstadoReporte.js";
 
 dayjs.extend(isSameOrBefore);
 
@@ -38,7 +38,8 @@ const conseguirTodosLosReportes = async (req, res) => {
      * @returns {JSON} - Lista de reportes.
      */
     try {
-        const reportes = await Reporte.find();
+        const reportes = await Reporte.find()
+            .populate("idEstadoReporte");
         res.status(200).json(reportes);
     } catch (error) {
         console.error(error);
@@ -789,7 +790,7 @@ async function generarNombreUnico() {
 
 async function crearEntradaReporte(nombre, url, tipo, id){
     try {
-        const reportes =  await TipoReporte.find();
+        const reportes =  await EstadoReporte.find();
 
         const getIdByName = (array, nombre) => {
             const obj = array.find(item => item.nombre === nombre);
@@ -798,7 +799,7 @@ async function crearEntradaReporte(nombre, url, tipo, id){
 
         if (!id) {
             return await Reporte.create({
-                idTipoReporte: getIdByName(reportes, tipo),
+                idEstadoReporte: getIdByName(reportes, tipo),
                 nombre: nombre,
                 fechaGeneracion: new Date(),
                 urlReporte: url,
@@ -807,7 +808,7 @@ async function crearEntradaReporte(nombre, url, tipo, id){
         } else {
             const reporte = await Reporte.findByIdAndUpdate(id,{
                 urlReporte: url,
-                idTipoReporte: getIdByName(reportes, tipo)
+                idEstadoReporte: getIdByName(reportes, tipo)
             });
 
             if (!reporte) {
