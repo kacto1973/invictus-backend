@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
 const reporteSchema = new mongoose.Schema({
-    idTipoReporte: {
+    idEstadoReporte: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'TipoReporte',
+        ref: 'EstadoReporte',
         required: true
       },
       nombre: {
