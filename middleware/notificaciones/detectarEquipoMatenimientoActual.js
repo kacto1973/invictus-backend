@@ -6,7 +6,7 @@ import equipo from "../../models/equipo/Equipo.js";
 import cron from "node-cron";
 
 const observarMantenimientos = () => {
-    return cron.schedule('* * * * *', async () => {
+    return cron.schedule('0 0 * * *', async () => {
         try {   // Esta establecido en actualizaciones de 1 minuto para pruebas, se cambiara a 1 hora
             const now = new Date();
             now.setHours(now.getHours() - 7);

@@ -7,8 +7,9 @@ const seedTipoReporte = async () => {
         await TipoReporte.deleteMany(); // Elimina todos los registros existentes
 
         const tiposReporte = [
-            { nombre: "Reactivos" },
-            { nombre: "Equipos" }
+            { nombre: "En progreso" },
+            { nombre: "Error" },
+            { nombre: "Completado" }
         ];
 
         await TipoReporte.insertMany(tiposReporte); // Inserta los nuevos registros

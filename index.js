@@ -7,6 +7,7 @@ import conectarDB from './config/db.js';
 import reactivoRoutes from './routes/reactivoRoutes.js';
 import inicioRoutes from './routes/inicioRoutes.js';
 import notificacionRoutes from './routes/notificacionRoutes.js';
+import reporteRoutes from './routes/reporteRoutes.js';
 
 const app = express();
 app.use(express.json());
@@ -18,6 +19,7 @@ conectarDB();
 app.use("/api/reactivos", reactivoRoutes);
 app.use("/api/inicio", inicioRoutes);
 app.use("/api/notificaciones", notificacionRoutes);
+app.use("/api/reportes", reporteRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

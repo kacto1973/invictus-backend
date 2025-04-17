@@ -21,7 +21,6 @@ const reporteSchema = new mongoose.Schema({
       },
       status: {
         type: Boolean,
-        default: true,
         required: true
       }
 });
