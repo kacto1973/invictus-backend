@@ -7,7 +7,7 @@ const seedEstadoReporte = async () => {
         await EstadoReporte.deleteMany(); // Elimina todos los registros existentes
 
         const estadosReporte = [
-            { nombre: "En progreso" },
+            { nombre: "En proceso" },
             { nombre: "Error" },
             { nombre: "Completado" }
         ];
