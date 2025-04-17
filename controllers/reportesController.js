@@ -687,8 +687,8 @@ async function crearTabla(opcion){
                     ser.fechaFin.toLocaleDateString("es-ES",
                         { day: "numeric", month: "long", year: "numeric" }),
                     ser.proximoMantenimiento ?? "ND",
-                    ser.status === true ? "No ha vencido" :
-                        ser.status === false ? "Ya ha vencido" :
+                    ser.status === true ? "Vigente" :
+                        ser.status === false ? "Vencido" :
                             "ND"
                 ]);
             })
@@ -736,8 +736,8 @@ async function crearTabla(opcion){
                     rev.fechaFin.toLocaleDateString("es-ES",
                         { day: "numeric", month: "long", year: "numeric" }),
                     rev.fechaAplazamiento ?? "ND",
-                    vencido === true ? "No ha vencido" :
-                        vencido === false ? "Ya ha vencido" :
+                    vencido === true ? "Vigente" :
+                        vencido === false ? "Vencido" :
                             "ND"
                 ]);
             })
