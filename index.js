@@ -6,6 +6,8 @@ import cors from 'cors';
 
 // RUTAS PARA LA API
 import reactivoRoutes from './routes/reactivoRoutes.js';
+import categoriaRoutes from './routes/categoriaRoutes.js';
+import marcaRoutes from './routes/marcaRoutes.js';
 
 const app = express();
 app.use(express.json());
@@ -14,6 +16,7 @@ dotenv.config();
 
 conectarDB();
 
+// CONFIGURACION DE CORS
 const dominiosPermitidos = ['http://localhost:5173']
 
 const corsOptions = {
@@ -30,6 +33,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use("/api/reactivos", reactivoRoutes);
+app.use("/api/categorias", categoriaRoutes);
+app.use("/api/marcas", marcaRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

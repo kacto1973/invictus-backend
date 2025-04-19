@@ -7,7 +7,7 @@ const seedReactivos = async () => {
         await Reactivo.deleteMany(); // Limpiar la colección
 
         const reactivos = [
-            {
+            {                
                 idGabinete: "643b0f1e1c4d88a1b8f0a001",
                 idMarca: "643b0f1e1c4d88a1b8f0a002",
                 idUnidadMedida: "643b0f1e1c4d88a1b8f0a003",

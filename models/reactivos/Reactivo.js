@@ -33,7 +33,7 @@ const reactivoSchema = new mongoose.Schema({
     codigoCatalogo: {
         type: String,
         required: false,
-        unique: true
+        unique: false
     },
     esPeligroso: {
         type: Boolean,
