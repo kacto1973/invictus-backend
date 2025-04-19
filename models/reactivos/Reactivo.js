@@ -9,21 +9,31 @@ const reactivoSchema = new mongoose.Schema({
     idMarca: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Marca', 
-        required: true
+        required: false
     },
     idUnidadMedida: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UnidadMedida', 
         required: true
     },
-    categoria: {
+    idCategoria: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Categoria', 
+        required: true
+    },
+    idEstadoFisico: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'EstadoFisico', 
         required: true
     },
     nombre: {
         type: String,
         required: true
+    },
+    codigoCatalogo: {
+        type: String,
+        required: false,
+        unique: true
     },
     esPeligroso: {
         type: Boolean,

@@ -1,4 +1,4 @@
-import { Reactivo, Gabinete, Marca, UnidadMedida, Categoria } from '../models/index.js';
+import { Reactivo, Gabinete, Marca, UnidadMedida, Categoria, EstadoFisico } from '../models/index.js';
 import { matchSorter } from 'match-sorter';
 
 const consultarReactivos = async (req, res) => {
@@ -12,7 +12,9 @@ const consultarReactivos = async (req, res) => {
             .populate('idGabinete', 'nombre -_id')
             .populate('idMarca', 'nombre -_id')
             .populate('idUnidadMedida', 'nombre -_id')
-            .populate('categoria', 'nombre -_id')
+            .populate('idCategoria', 'nombre -_id')
+            .populate('idEstadoFisico', 'nombre -_id')
+            .where({ status: true })
             .lean(); // Convertir documentos a objetos simples
 
         // Validaciones
@@ -56,7 +58,9 @@ const consultarReactivoPorId = async (req, res) => {
             .populate('idGabinete', 'nombre -_id')
             .populate('idMarca', 'nombre -_id')
             .populate('idUnidadMedida', 'nombre -_id')
-            .populate('categoria', 'nombre -_id');
+            .populate('idCategoria', 'nombre -_id')
+            .populate('idEstadoFisico', 'nombre -_id')
+            .where({ status: true })
 
         // Validaciones
         if (!reactivo) {
@@ -77,7 +81,7 @@ const crearReactivo = async (req, res) => {
         const reactivo = new Reactivo(req.body);
         
         // Validaciones
-        if (!reactivo.idGabinete || !reactivo.idMarca || !reactivo.idUnidadMedida || !reactivo.categoria) {
+        if (!reactivo.idGabinete || !reactivo.idMarca || !reactivo.idUnidadMedida || !reactivo.idCategoria) {
             return res.status(400).json({ message: 'Faltan datos requeridos para crear el reactivo' });
         }
                 
@@ -96,9 +100,14 @@ const crearReactivo = async (req, res) => {
             return res.status(404).json({ message: 'Unidad de medida no encontrada' });
         }
         
-        const categoriaExistente = await Categoria.findById(reactivo.categoria);
-        if (!categoriaExistente) {
+        const idCategoriaExistente = await Categoria.findById(reactivo.idCategoria);
+        if (!idCategoriaExistente) {
             return res.status(404).json({ message: 'Categoría no encontrada' });
+        }
+
+        const idEstadoFisicoExistente = await EstadoFisico.findById(reactivo.idEstadoFisico);
+        if (!idEstadoFisicoExistente) {
+            return res.status(404).json({ message: 'Estado físico no encontrado' });
         }
         
         if (reactivo.cantidad < 0) {
@@ -145,10 +154,17 @@ const actualizarReactivo = async (req, res) => {
             }
         }
 
-        if (req.body.categoria) {
-            const categoriaExistente = await Categoria.findById(req.body.categoria);
-            if (!categoriaExistente) {
+        if (req.body.idCategoria) {
+            const idCategoriaExistente = await Categoria.findById(req.body.idCategoria);
+            if (!idCategoriaExistente) {
                 return res.status(404).json({ message: 'Categoria no encontrada' });
+            }
+        }
+
+        if (req.body.idEstadoFisico) {
+            const idEstadoFisicoExistente = await EstadoFisico.findById(req.body.idEstadoFisico);
+            if (!idEstadoFisicoExistente) {
+                return res.status(404).json({ message: 'Estado físico no encontrado' });
             }
         }
 
@@ -162,8 +178,10 @@ const actualizarReactivo = async (req, res) => {
             idGabinete: req.body.idGabinete || reactivo.idGabinete,
             idMarca: req.body.idMarca || reactivo.idMarca,
             idUnidadMedida: req.body.idUnidadMedida || reactivo.idUnidadMedida,
-            categoria: req.body.categoria || reactivo.categoria,
+            idCategoria: req.body.idCategoria || reactivo.idCategoria,
+            idEstadoFisico: req.body.idEstadoFisico || reactivo.idEstadoFisico,            
             nombre: req.body.nombre || reactivo.nombre,
+            codigoCatalogo: req.body.codigoCatalogo || reactivo.codigoCatalogo,
             esPeligroso: req.body.esPeligroso || reactivo.esPeligroso,
             cantidad: req.body.cantidad || reactivo.cantidad,
             status: req.body.status || reactivo.status,
