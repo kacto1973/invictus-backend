@@ -10,6 +10,7 @@ import categoriaRoutes from './routes/categoriaRoutes.js';
 import marcaRoutes from './routes/marcaRoutes.js';
 import gabinetesRoutes from './routes/gabineteRoutes.js';
 import estadoFisicoRoutes from './routes/estadoFisicoRoutes.js';
+import unidadMedidaRoutes from './routes/unidadMedidaRoutes.js';
 
 const app = express();
 app.use(express.json());
@@ -39,6 +40,7 @@ app.use("/api/categorias", categoriaRoutes);
 app.use("/api/marcas", marcaRoutes);
 app.use("/api/gabinetes", gabinetesRoutes);
 app.use("/api/estado-fisico", estadoFisicoRoutes);
+app.use("/api/unidad-medida", unidadMedidaRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
