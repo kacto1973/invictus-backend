@@ -888,7 +888,7 @@ const crearReporte = async (req, res) => {
             return;
         }
 
-        const idReporte = await crearEntradaReporte(nombrePDF, "No hay url todavia :c", "En proceso");
+        const idReporte = await crearEntradaReporte("Reporte " + nombrePDF, "No hay url todavia :c", "En proceso");
 
         const doc = new PDFDocument({
             margins: { top: 50, bottom: 50, left: 50, right: 50 }
