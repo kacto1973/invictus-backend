@@ -8,6 +8,7 @@ import cors from 'cors';
 import reactivoRoutes from './routes/reactivoRoutes.js';
 import categoriaRoutes from './routes/categoriaRoutes.js';
 import marcaRoutes from './routes/marcaRoutes.js';
+import gabinetesRoutes from './routes/gabineteRoutes.js'; // Cambia esto si tienes una ruta específica para gabinetes
 
 const app = express();
 app.use(express.json());
@@ -17,7 +18,7 @@ dotenv.config();
 conectarDB();
 
 // CONFIGURACION DE CORS
-const dominiosPermitidos = ['http://localhost:5173']
+const dominiosPermitidos = [process.env.FRONTEND_URL];
 
 const corsOptions = {
     origin: function (origin, callback) {
@@ -35,6 +36,7 @@ app.use(cors(corsOptions));
 app.use("/api/reactivos", reactivoRoutes);
 app.use("/api/categorias", categoriaRoutes);
 app.use("/api/marcas", marcaRoutes);
+app.use("/api/gabinetes", gabinetesRoutes); // Cambia esto si tienes una ruta específica para gabinetes
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
