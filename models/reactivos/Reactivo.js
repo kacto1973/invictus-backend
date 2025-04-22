@@ -41,13 +41,12 @@ const reactivoSchema = new mongoose.Schema({
     },
     cantidad: {
         type: Number,
-        min: 0,
-        required: true
+        default: 0,
+        required: false
     },
     status: {
         type: Boolean,
-        default: true,
-        required: true
+        default: true
     }
 }, { collection: 'Reactivo' });
 
