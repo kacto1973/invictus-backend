@@ -3,7 +3,7 @@ import Categoria from '../models/reactivos/Categoria.js';
 const consultarCategorias = async (req, res) => {
     try {
         const categorias = await Categoria.find({})
-            .select('-__v -_id')
+            .select('-__v')
             .lean();
 
         res.status(200).json(categorias);

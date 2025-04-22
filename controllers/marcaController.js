@@ -3,7 +3,7 @@ import Marca from '../models/reactivos/Marca.js';
 const consultarMarcas = async (req, res) => {
     try {
         const marcas = await Marca.find({})
-            .select('-__v -_id')
+            .select('-__v')
             .lean();
 
         res.status(200).json(marcas);

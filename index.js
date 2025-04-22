@@ -8,7 +8,8 @@ import cors from 'cors';
 import reactivoRoutes from './routes/reactivoRoutes.js';
 import categoriaRoutes from './routes/categoriaRoutes.js';
 import marcaRoutes from './routes/marcaRoutes.js';
-import gabinetesRoutes from './routes/gabineteRoutes.js'; // Cambia esto si tienes una ruta específica para gabinetes
+import gabinetesRoutes from './routes/gabineteRoutes.js';
+import estadoFisicoRoutes from './routes/estadoFisicoRoutes.js';
 
 const app = express();
 app.use(express.json());
@@ -36,7 +37,8 @@ app.use(cors(corsOptions));
 app.use("/api/reactivos", reactivoRoutes);
 app.use("/api/categorias", categoriaRoutes);
 app.use("/api/marcas", marcaRoutes);
-app.use("/api/gabinetes", gabinetesRoutes); // Cambia esto si tienes una ruta específica para gabinetes
+app.use("/api/gabinetes", gabinetesRoutes);
+app.use("/api/estado-fisico", estadoFisicoRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
