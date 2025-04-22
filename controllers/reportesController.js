@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore.js';
 import Reporte from "../models/reportes/Reporte.js";
 import EstadoReporte from "../models/reportes/EstadoReporte.js";
+import { matchSorter } from "match-sorter";
 
 dayjs.extend(isSameOrBefore);
 
@@ -1050,9 +1051,89 @@ const cambiarNombreReporte = async (req, res) => {
     }
 }
 
+const conseguirReportesPorNombre = async (req, res) => {
+    /**
+     * Obtiene un reporte por su nombre.
+     * @param {String} req.params.nombre - Nombre del reporte a buscar.
+     * @returns {JSON} - Reportes encontrados que coinciden con el nombre, o un error.
+     */
+    try {
+        const { nombre } = req.params;
+
+        if (!nombre) {
+            res.status(400).json({ error: "Nombre del reporte es requerido" });
+            return;
+        }
+
+        const reportes = await Reporte.find();
+
+        if (!reportes || reportes.length === 0) {
+            return res.status(404).json({ error: "Reportes no encontrados" });
+        }
+
+        const reportesEncontrados = matchSorter(reportes, nombre.toLowerCase(), {
+            keys: [item => item.nombre.toLowerCase()]
+        });
+
+        res.status(200).json(reportesEncontrados);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al obtener el reporte" });
+    }
+}
+
+const conseguirReportesPorRangoDeFechas = async (req, res) => {
+    /**
+     * Obtiene reportes por un rango de fechas.
+     * @param {String} req.body.fechaInicio - Fecha de inicio del rango.
+     * @param {String} req.body.fechaFin - Fecha de fin del rango.
+     * @returns {JSON} - Reportes encontrados dentro del rango de fechas, o un error.
+     */
+    try {
+        const { fechaInicio, fechaFin } = req.body;
+
+        if (!fechaInicio || !fechaFin) {
+            res.status(400).json({ error: "Fechas son requeridas" });
+            return;
+        }
+
+        const [anio, mes, dia] = fechaInicio.split('-').map(Number);
+        const fechaInicioDate = new Date(anio, mes - 1, dia, 0, 0, 0, 0);
+
+        const [anioF, mesF, diaF] = fechaFin.split('-').map(Number);
+        const fechaFinDate = new Date(anioF, mesF - 1, diaF, 23, 59, 59, 999);
+
+        if (isNaN(fechaInicioDate) || isNaN(fechaFinDate)) {
+            res.status(400).json({ error: "Fechas inválidas" });
+            return;
+        }
+
+        if (fechaInicioDate > fechaFinDate) {
+            res.status(400).json({ error: "La fecha de inicio no puede ser mayor que la fecha de fin" });
+            return;
+        }
+
+        console.log("Fechas de búsqueda:", fechaInicioDate, fechaFinDate);
+
+        const reportes = await Reporte.find({
+            fechaGeneracion: {
+                $gte: fechaInicioDate,
+                $lte: fechaFinDate
+            }
+        });
+
+        res.status(200).json(reportes);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al obtener los reportes" });
+    }
+}
+
 export {
     conseguirTodosLosReportes,
     crearReporte,
     eliminarReporte,
-    cambiarNombreReporte
+    cambiarNombreReporte,
+    conseguirReportesPorNombre,
+    conseguirReportesPorRangoDeFechas
 };
