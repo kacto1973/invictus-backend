@@ -28,17 +28,24 @@ const eliminarNotificacion = async (req, res) => {
     /**
         Se eliminan las notificaciones que tengan el estado de eliminado
         y se cambia el estado a eliminado si no lo tienen.
-     @param {String} req.params.id - ID de la notificacion a eliminar.
+     @param {String} req.body.id - ID de la notificacion a eliminar.
      @returns {JSON} - Mensaje de exito o error.
     */
+
+    if (!req.body.id) {
+        res.status(400).json({ error: "ID de notificación no proporcionado" });
+        return;
+    }
+
     const listaEstadoNotificacion = await conseguirIDEstadoNotificacion();
+
     try {
-        let valor = await Notificacion.findById(req.params.id);
+        let valor = await Notificacion.findById(req.body.id);
         if (valor.idEstadoNotificacion.equals(listaEstadoNotificacion[2])) {
-            await Notificacion.findByIdAndDelete(req.params.id);
+            await Notificacion.findByIdAndDelete(req.body.id);
             res.status(200).json({ message: `Notificación ${valor.idEstadoNotificacion} eliminada completamente.` });
         } else {
-            await Notificacion.findByIdAndUpdate(req.params.id, {idEstadoNotificacion: listaEstadoNotificacion[2]});
+            await Notificacion.findByIdAndUpdate(req.body.id, {idEstadoNotificacion: listaEstadoNotificacion[2]});
             res.status(200).json({ message: `Notificación ${valor.idEstadoNotificacion} eliminada.` });
         }
 
@@ -51,13 +58,20 @@ const eliminarNotificacion = async (req, res) => {
 const cambiarNotificacionALeido = async (req, res) => {
     /**
         Cambia el estado de la notificacion a leido.
-        @param {String} req.params.id - ID de la notificacion a cambiar.
+        @param {String} req.body.id - ID de la notificacion a cambiar.
         @returns {JSON} - Mensaje de exito o error.
     */
+
+    if (!req.body.id) {
+        res.status(400).json({ error: "ID de notificación no proporcionado" });
+        return;
+    }
+
     const listaEstadoNotificacion = await conseguirIDEstadoNotificacion();
+
     try {
         await Notificacion.findByIdAndUpdate(
-            req.params.id,
+            req.body.id,
             {idEstadoNotificacion: listaEstadoNotificacion[0]}
         );
         res.status(200).json({ message: "Notificación leída" });

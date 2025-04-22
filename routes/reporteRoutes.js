@@ -11,9 +11,9 @@ import {
 
 router.get('/', conseguirTodosLosReportes)
 router.post('/crear', crearReporte);
-router.post('/eliminar/:id', eliminarReporte);
-router.post('/cambiarNombre/:id', cambiarNombreReporte)
-router.get('/consultar/:nombre', conseguirReportesPorNombre);
-router.get('/consultarPorRangoDeFechas', conseguirReportesPorRangoDeFechas);
+router.post('/eliminar', eliminarReporte);
+router.post('/cambiarNombre', cambiarNombreReporte)
+router.get('/consultarPorNombre', conseguirReportesPorNombre);
+router.get('/consultarPorFechas', conseguirReportesPorRangoDeFechas);
 
 export default router;

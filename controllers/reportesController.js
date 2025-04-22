@@ -986,11 +986,11 @@ const crearReporte = async (req, res) => {
 const eliminarReporte = async (req, res) => {
     /**
      * Elimina un reporte de la base de datos y del almacenamiento.
-     * @param {String} req.params.id - ID del reporte a eliminar.
+     * @param {String} req.body.id - ID del reporte a eliminar.
      * @returns {JSON} - Mensaje de éxito o error.
      */
     try {
-        const { id } = req.params;
+        const { id } = req.body;
 
         if (!id) {
             res.status(400).json({ error: "ID del reporte es requerido" });
@@ -1025,13 +1025,12 @@ const eliminarReporte = async (req, res) => {
 const cambiarNombreReporte = async (req, res) => {
     /**
      * Cambia el nombre de un reporte en la base de datos.
-     * @param {String} req.params.id - ID del reporte a modificar.
+     * @param {String} req.body.id - ID del reporte a modificar.
      * @param {String} req.body.nombre - Nuevo nombre del reporte.
      * @returns {JSON} - Mensaje de éxito o error.
      */
     try {
-        const { id } = req.params;
-        const { nombre } = req.body;
+        const { id, nombre } = req.body;
 
         if (!id || !nombre) {
             res.status(400).json({ error: "ID y nombre son requeridos" });
@@ -1054,11 +1053,11 @@ const cambiarNombreReporte = async (req, res) => {
 const conseguirReportesPorNombre = async (req, res) => {
     /**
      * Obtiene un reporte por su nombre.
-     * @param {String} req.params.nombre - Nombre del reporte a buscar.
+     * @param {String} req.body.nombre - Nombre del reporte a buscar.
      * @returns {JSON} - Reportes encontrados que coinciden con el nombre, o un error.
      */
     try {
-        const { nombre } = req.params;
+        const { nombre } = req.body;
 
         if (!nombre) {
             res.status(400).json({ error: "Nombre del reporte es requerido" });
@@ -1097,11 +1096,8 @@ const conseguirReportesPorRangoDeFechas = async (req, res) => {
             return;
         }
 
-        const [anio, mes, dia] = fechaInicio.split('-').map(Number);
-        const fechaInicioDate = new Date(anio, mes - 1, dia, 0, 0, 0, 0);
-
-        const [anioF, mesF, diaF] = fechaFin.split('-').map(Number);
-        const fechaFinDate = new Date(anioF, mesF - 1, diaF, 23, 59, 59, 999);
+        const fechaInicioDate = new Date(fechaInicio);
+        const fechaFinDate = new Date(fechaFin);
 
         if (isNaN(fechaInicioDate) || isNaN(fechaFinDate)) {
             res.status(400).json({ error: "Fechas inválidas" });
@@ -1113,7 +1109,9 @@ const conseguirReportesPorRangoDeFechas = async (req, res) => {
             return;
         }
 
-        console.log("Fechas de búsqueda:", fechaInicioDate, fechaFinDate);
+        // Establecer horas para incluir el rango
+        fechaInicioDate.setHours(0, 0, 0, 0);
+        fechaFinDate.setHours(23, 59, 59, 999);
 
         const reportes = await Reporte.find({
             fechaGeneracion: {
