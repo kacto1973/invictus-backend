@@ -6,7 +6,7 @@ import equipo from "../../models/equipo/Equipo.js";
 import cron from "node-cron";
 
 const observarMantenimientos = () => {
-    return cron.schedule('* * * * *', async () => { // Cada hora
+    return cron.schedule('0 * * * *', async () => { // Cada hora
         try {
             const now = new Date(new Date().setUTCHours(0, 0, 0, 0));
             console.log(`Revisando notificaciones...`);
