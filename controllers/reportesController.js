@@ -806,7 +806,7 @@ async function crearEntradaReporte(nombre, url, tipo, id){
             return await Reporte.create({
                 idEstadoReporte: getIdByName(reportes, tipo),
                 nombre: nombre,
-                fechaGeneracion: dayjs().tz('America/Hermosillo').toDate(), // Se guarda en UTC -7
+                fechaGeneracion: dayjs().tz('America/Hermosillo').toDate(), // Se guarda en UTC -7.
                 urlReporte: url,
                 status: true
             });
@@ -881,7 +881,7 @@ const crearReporte = async (req, res) => {
             !listadoServicios && !listadoUsos && !graficaCategoriasReactivos &&
             !graficaEntradasSalidas && !graficaReactivosAgotados &&
             !graficaUsodeEquipos && !graficaServicioEquipos) {
-            res.status(400).json({ error: "No se seleccionó ningún reporte" });
+            res.status(400).json({ error: "Error en la seleccion de opciones del reporte." });
             return;
         }
 
@@ -898,8 +898,22 @@ const crearReporte = async (req, res) => {
             margins: { top: 50, bottom: 50, left: 50, right: 50 }
         });
 
+        const logoPath = './assets/DICTUS-logo.png';
+
+        const insertarLogo = () => {
+            const logoWidth = 50;
+            const logoHeight = 50;
+            const x = doc.page.width - logoWidth - 20;
+            const y = 20;
+
+            doc.image(logoPath, x, y, { width: logoWidth, height: logoHeight });
+        };
+
+        insertarLogo();
+        doc.on('pageAdded', insertarLogo);
 
         let tablas = [];
+        let huboPaginaAnterior = false;
         if (listadoReactivos || listadoEntradasSalidas || listadoEquipos || listadoServicios || listadoUsos) {
             if (listadoReactivos) tablas.push(await crearTabla(1));
             if (listadoEntradasSalidas) tablas.push(await crearTabla(2));
@@ -911,11 +925,17 @@ const crearReporte = async (req, res) => {
                 await insertarTablaConChequeo(doc, data);
                 doc.moveDown();
             }
+
+            huboPaginaAnterior = true;
         }
+
+
 
         let imagenes = [];
         if (graficaCategoriasReactivos || graficaEntradasSalidas || graficaReactivosAgotados || graficaUsodeEquipos || graficaServicioEquipos) {
-            doc.addPage();
+
+            if (huboPaginaAnterior) doc.addPage();
+
             if (graficaCategoriasReactivos) imagenes.push(await crearGrafico(1));
             if (graficaEntradasSalidas) imagenes.push(await crearGrafico(2));
             if (graficaReactivosAgotados) imagenes.push(await crearGrafico(3));

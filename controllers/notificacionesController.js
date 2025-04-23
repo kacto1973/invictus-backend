@@ -104,10 +104,10 @@ const cambiarTodasLasNotificacionesALeido = async (req, res) => {
             {idEstadoNotificacion: listaEstadoNotificacion[1]},
             {idEstadoNotificacion: listaEstadoNotificacion[0]}
         );
-        res.status(200).json({ message: "Todas las notificaciones fueron leídas" });
+        res.status(200).json({ message: "Todas las notificaciones fueron leídas." });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Error al obtener las notificaciones" });
+        res.status(500).json({ error: "Error al obtener las notificaciones." });
     }
 }
 
