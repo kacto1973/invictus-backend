@@ -25,7 +25,7 @@ const observarNuevasCalendarizaciones = async () => {
                 idTipoNotificacion: listaTipoNotificacion[1],
                 idEstadoNotificacion: listaEstadoNotificacion[1],
                 idEquipo: nuevaReserva.idEquipo,
-                descripcion: `El ${equipo.nombre} ha sido calendarizado por ${dias} dias`,
+                descripcion: `El <strong>${equipo.nombre}</strong> ha sido calendarizado por ${dias} dias`,
                 fechaGeneracion: now,
                 status: true
             });

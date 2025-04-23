@@ -9,8 +9,8 @@ const observarMantenimientos = () => {
     return cron.schedule('* * * * *', async () => { // Cada hora
         try {
             const now = new Date(new Date().setUTCHours(0, 0, 0, 0));
-            // now.setHours(now.getHours() - 7);
-            console.log(`Revisando notificaciones...\nLa hora actual es: ${now}\nEn UTC es: ${new Date()}`);
+            console.log(`Revisando notificaciones...`);
+            // console.log(`Hora actual: ${now}`);
 
             const mantenimientosActivos = await Mantenimiento.find({
                 fechaInicio: {$lte: now},
@@ -35,7 +35,7 @@ const observarMantenimientos = () => {
                         idEstadoNotificacion: listaIDEstado[1], // Sin leer
                         idEquipo: mantenimiento.idEquipo,
                         idMantenimiento: mantenimiento._id,
-                        descripcion: `El equipo con ID ${documentoEquipo.nombre} está en mantenimiento.`,
+                        descripcion: `El equipo <strong>${documentoEquipo.nombre}</strong> se encuentra bajo mantenimiento.`,
                         fechaGeneracion: now,
                         status: true
                     });
@@ -55,9 +55,11 @@ const observarMantenimientos = () => {
                 if (mantenimiento && mantenimiento.fechaFin < now) {
                     await Notificacion.findByIdAndDelete(notificacion._id);
                     await Mantenimiento.findByIdAndUpdate(mantenimiento._id, {status: false});
-                    console.log(`Notificación del equipo ${notificacion.idEquipo} se elimino.\nTambien se paso a false el mantenimiento ${mantenimiento._id}`);
+                    console.log(`La notificación del equipo ${notificacion.idEquipo} se elimino.\nTambien se cambio a 'false' su mantenimiento unido con ID de ${mantenimiento._id}.`);
                 }
             }
+
+            console.log("Revisión de notificaciones completada.");
         } catch (error) {
             console.error("Error al observar mantenimientos:", error);
         }

@@ -24,15 +24,15 @@ const observarAgotados = async () => {
                     idTipoNotificacion: listaTipoNotificacion[0], // Reactivo Agotado
                     idEstadoNotificacion: listaEstadoNotificacion[1], // Sin leer
                     idReactivo: idReactivo,
-                    descripcion: `Actualmente no contamos con ${reactivo.nombre} en inventario.`,
+                    descripcion: `Actualmente no contamos con <strong>${reactivo.nombre}</strong> en inventario.`,
                     fechaGeneracion: fechaActual,
                     status: true
                 });
-                console.log(`El Reactivo ${reactivo.nombre} esta agotado.`);
+                console.log(`El Reactivo ${reactivo.nombre} esta agotado. Se ha creado una notificacion.`);
             }
         } else if (nuevoValor > 0) { // Elimina la notificacion si el valor ya no es 0
             await Notificacion.deleteMany({ idReactivo });
-            console.log(`El Reactivo ${reactivo.nombre} ya no esta agotado.`);
+            console.log(`El Reactivo ${reactivo.nombre} ya no esta agotado. Se ha eliminado la notificacion.`);
         }
     });
 };
