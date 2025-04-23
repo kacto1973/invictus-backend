@@ -14,11 +14,15 @@ import Reserva from "../models/equipo/Reserva.js";
 import Categoria from "../models/reactivos/Categoria.js";
 import dayjs from "dayjs";
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore.js';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
 import Reporte from "../models/reportes/Reporte.js";
 import EstadoReporte from "../models/reportes/EstadoReporte.js";
 import { matchSorter } from "match-sorter";
 
 dayjs.extend(isSameOrBefore);
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 // Todos los imports inutilizados son necesarios para inicializar los esquemas de MongoDB
 
@@ -802,7 +806,7 @@ async function crearEntradaReporte(nombre, url, tipo, id){
             return await Reporte.create({
                 idEstadoReporte: getIdByName(reportes, tipo),
                 nombre: nombre,
-                fechaGeneracion: new Date(),
+                fechaGeneracion: dayjs().tz('America/Hermosillo').toDate(), // Se guarda en UTC -7
                 urlReporte: url,
                 status: true
             });
@@ -1096,10 +1100,10 @@ const conseguirReportesPorRangoDeFechas = async (req, res) => {
             return;
         }
 
-        const fechaInicioDate = new Date(fechaInicio);
-        const fechaFinDate = new Date(fechaFin);
+        const fechaInicioDate = dayjs.tz(fechaInicio, 'America/Hermosillo').startOf('day').toDate();
+        const fechaFinDate = dayjs.tz(fechaFin, 'America/Hermosillo').endOf('day').toDate();
 
-        if (isNaN(fechaInicioDate) || isNaN(fechaFinDate)) {
+        if (!fechaInicioDate || !fechaFinDate || isNaN(fechaInicioDate) || isNaN(fechaFinDate)) {
             res.status(400).json({ error: "Fechas inválidas" });
             return;
         }
@@ -1108,10 +1112,6 @@ const conseguirReportesPorRangoDeFechas = async (req, res) => {
             res.status(400).json({ error: "La fecha de inicio no puede ser mayor que la fecha de fin" });
             return;
         }
-
-        // Establecer horas para incluir el rango
-        fechaInicioDate.setHours(0, 0, 0, 0);
-        fechaFinDate.setHours(23, 59, 59, 999);
 
         const reportes = await Reporte.find({
             fechaGeneracion: {

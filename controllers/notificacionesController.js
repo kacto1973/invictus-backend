@@ -41,12 +41,18 @@ const eliminarNotificacion = async (req, res) => {
 
     try {
         let valor = await Notificacion.findById(req.body.id);
+
+        if (!valor) {
+            res.status(404).json({ error: "Notificación no encontrada" });
+            return;
+        }
+
         if (valor.idEstadoNotificacion.equals(listaEstadoNotificacion[2])) {
             await Notificacion.findByIdAndDelete(req.body.id);
             res.status(200).json({ message: `Notificación ${valor.idEstadoNotificacion} eliminada completamente.` });
         } else {
             await Notificacion.findByIdAndUpdate(req.body.id, {idEstadoNotificacion: listaEstadoNotificacion[2]});
-            res.status(200).json({ message: `Notificación ${valor.idEstadoNotificacion} eliminada.` });
+            res.status(200).json({ message: `Notificación ${valor.idEstadoNotificacion} se ha cambiado a false.` });
         }
 
     } catch (error) {
@@ -70,10 +76,16 @@ const cambiarNotificacionALeido = async (req, res) => {
     const listaEstadoNotificacion = await conseguirIDEstadoNotificacion();
 
     try {
-        await Notificacion.findByIdAndUpdate(
+        const notificacion = await Notificacion.findByIdAndUpdate(
             req.body.id,
             {idEstadoNotificacion: listaEstadoNotificacion[0]}
         );
+
+        if (!notificacion) {
+            res.status(404).json({ error: "Notificación no encontrada" });
+            return;
+        }
+
         res.status(200).json({ message: "Notificación leída" });
     } catch (error) {
         console.error(error);
