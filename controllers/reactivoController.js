@@ -183,8 +183,7 @@ const actualizarReactivo = async (req, res) => {
             nombre: req.body.nombre || reactivo.nombre,
             codigoCatalogo: req.body.codigoCatalogo || reactivo.codigoCatalogo,
             esPeligroso: req.body.esPeligroso || reactivo.esPeligroso,
-            cantidad: req.body.cantidad || reactivo.cantidad,
-            status: req.body.status || reactivo.status,
+            cantidad: req.body.cantidad || reactivo.cantidad
         };
 
         const noHayCambios = Object.keys(cambios).every(
