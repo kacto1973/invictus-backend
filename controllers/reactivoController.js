@@ -103,93 +103,9 @@ const crearReactivo = async (req, res) => {
         .json({ message: "Faltan datos requeridos para crear el reactivo" });
     }
 
-<<<<<<< HEAD
-const actualizarReactivo = async (req, res) => {        
-    try {
-        const { id } = req.params;
-        const reactivo = await Reactivo.findById(id);
-    
-        if (!reactivo) {
-            return res.status(404).json({ message: 'Reactivo no encontrado' });
-        }
-
-        // Validaciones de datos relacionados
-        if (req.body.idGabinete) {
-            const gabineteExistente = await Gabinete.findById(req.body.idGabinete);
-            if (!gabineteExistente) {
-                return res.status(404).json({ message: 'Gabinete no encontrado' });
-            }
-        }
-
-        if (req.body.idMarca) {
-            const marcaExistente = await Marca.findById(req.body.idMarca);
-            if (!marcaExistente) {
-                return res.status(404).json({ message: 'Marca no encontrada' });
-            }
-        }
-
-        if (req.body.idUnidadMedida) {
-            const unidadMedidaExistente = await UnidadMedida.findById(req.body.idUnidadMedida);
-            if (!unidadMedidaExistente) {
-                return res.status(404).json({ message: 'Unidad de medida no encontrada' });
-            }
-        }
-
-        if (req.body.idCategoria) {
-            const idCategoriaExistente = await Categoria.findById(req.body.idCategoria);
-            if (!idCategoriaExistente) {
-                return res.status(404).json({ message: 'Categoria no encontrada' });
-            }
-        }
-
-        if (req.body.idEstadoFisico) {
-            const idEstadoFisicoExistente = await EstadoFisico.findById(req.body.idEstadoFisico);
-            if (!idEstadoFisicoExistente) {
-                return res.status(404).json({ message: 'Estado físico no encontrado' });
-            }
-        }
-
-        // Validación de cantidad
-        if (req.body.cantidad !== undefined && req.body.cantidad < 0) {
-            return res.status(400).json({ message: 'La cantidad no puede ser negativa' });
-        }
-
-        // Verificar si hay cambios en los datos
-        const cambios = {
-            idGabinete: req.body.idGabinete || reactivo.idGabinete,
-            idMarca: req.body.idMarca || reactivo.idMarca,
-            idUnidadMedida: req.body.idUnidadMedida || reactivo.idUnidadMedida,
-            idCategoria: req.body.idCategoria || reactivo.idCategoria,
-            idEstadoFisico: req.body.idEstadoFisico || reactivo.idEstadoFisico,            
-            nombre: req.body.nombre || reactivo.nombre,
-            codigoCatalogo: req.body.codigoCatalogo || reactivo.codigoCatalogo,
-            esPeligroso: req.body.esPeligroso || reactivo.esPeligroso,
-            cantidad: req.body.cantidad || reactivo.cantidad
-        };
-
-        const noHayCambios = Object.keys(cambios).every(
-            (key) => String(cambios[key]) === String(reactivo[key])
-        );
-
-        if (noHayCambios) {
-            return res.status(400).json({ message: 'No se realizaron cambios en el reactivo' });
-        }
-
-        // Actualizar reactivo
-        Object.keys(cambios).forEach((key) => {
-            reactivo[key] = cambios[key];
-        });
-
-        await reactivo.save();
-        res.status(200).json({ message: 'Reactivo actualizado exitosamente' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error al actualizar el reactivo' });
-=======
     const gabineteExistente = await Gabinete.findById(reactivo.idGabinete);
     if (!gabineteExistente) {
       return res.status(404).json({ message: "Gabinete no encontrado" });
->>>>>>> de3910817cb88fd13d8152ca3fa548d12f0f4fa8
     }
 
     const marcaExistente = await Marca.findById(reactivo.idMarca);
@@ -293,19 +209,18 @@ const actualizarReactivo = async (req, res) => {
         .json({ message: "La cantidad no puede ser negativa" });
     }
 
-    // Verificar si hay cambios en los datos
-    const cambios = {
-      idGabinete: req.body.idGabinete || reactivo.idGabinete,
-      idMarca: req.body.idMarca || reactivo.idMarca,
-      idUnidadMedida: req.body.idUnidadMedida || reactivo.idUnidadMedida,
-      idCategoria: req.body.idCategoria || reactivo.idCategoria,
-      idEstadoFisico: req.body.idEstadoFisico || reactivo.idEstadoFisico,
-      nombre: req.body.nombre || reactivo.nombre,
-      codigoCatalogo: req.body.codigoCatalogo || reactivo.codigoCatalogo,
-      esPeligroso: req.body.esPeligroso || reactivo.esPeligroso,
-      cantidad: req.body.cantidad || reactivo.cantidad,
-      status: req.body.status || reactivo.status,
-    };
+        // Verificar si hay cambios en los datos
+        const cambios = {
+            idGabinete: req.body.idGabinete || reactivo.idGabinete,
+            idMarca: req.body.idMarca || reactivo.idMarca,
+            idUnidadMedida: req.body.idUnidadMedida || reactivo.idUnidadMedida,
+            idCategoria: req.body.idCategoria || reactivo.idCategoria,
+            idEstadoFisico: req.body.idEstadoFisico || reactivo.idEstadoFisico,            
+            nombre: req.body.nombre || reactivo.nombre,
+            codigoCatalogo: req.body.codigoCatalogo || reactivo.codigoCatalogo,
+            esPeligroso: req.body.esPeligroso || reactivo.esPeligroso,
+            cantidad: req.body.cantidad || reactivo.cantidad
+        };
 
     const noHayCambios = Object.keys(cambios).every(
       (key) => String(cambios[key]) === String(reactivo[key])
