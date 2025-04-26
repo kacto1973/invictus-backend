@@ -117,7 +117,7 @@ const crearReactivo = async (req, res) => {
     }
 
     // Validación y asignación de código catálogo
-    reactivo.codigoCatalogo = reactivo.codigoCatalogo?.trim() || "N/D";
+    req.body.codigoCatalogo = req.body.codigoCatalogo?.trim() || "N/D";
 
     if (req.body.unidadMedida && req.body.unidadMedida.valor && req.body.unidadMedida.idUnidadMedida) {
       const unidadMedidaExistente = await UnidadMedida.findById(req.body.unidadMedida.idUnidadMedida);
@@ -167,28 +167,15 @@ const actualizarReactivo = async (req, res) => {
       }
     }
 
-    if (req.body.idUnidadMedida) {
-      const unidadMedidaExistente = await UnidadMedida.findById(
-        req.body.idUnidadMedida
-      );
-      if (!unidadMedidaExistente) {
-        return res.status(404).json({ message: "Unidad de medida no encontrada" });
-      }
-    }
-
     if (req.body.idCategoria) {
-      const idCategoriaExistente = await Categoria.findById(
-        req.body.idCategoria
-      );
+      const idCategoriaExistente = await Categoria.findById(req.body.idCategoria);
       if (!idCategoriaExistente) {
         return res.status(404).json({ message: "Categoria no encontrada" });
       }
     }
 
     if (req.body.idEstadoFisico) {
-      const idEstadoFisicoExistente = await EstadoFisico.findById(
-        req.body.idEstadoFisico
-      );
+      const idEstadoFisicoExistente = await EstadoFisico.findById(req.body.idEstadoFisico);
       if (!idEstadoFisicoExistente) {
         return res.status(404).json({ message: "Estado físico no encontrado" });
       }
@@ -202,22 +189,29 @@ const actualizarReactivo = async (req, res) => {
     req.body.codigoCatalogo = req.body.codigoCatalogo?.trim() || "N/D";
 
     // Validación y asignación de unidad de medida
-    if (req.body.unidadMedidaValor && req.body.idUnidadMedida) {
-      const unidadMedidaExistente = await UnidadMedida.findById(req.body.idUnidadMedida);
+    if (req.body.unidadMedida && req.body.unidadMedida.valor && req.body.unidadMedida.idUnidadMedida) {
+      // Validar que el valor esté entre 1 y 999
+      if (req.body.unidadMedida.valor < 1 || req.body.unidadMedida.valor > 999) {
+        return res.status(400).json({ message: "El valor de la unidad de medida debe estar entre 1 y 999" });
+      }
+    
+      const unidadMedidaExistente = await UnidadMedida.findById(req.body.unidadMedida.idUnidadMedida);
       if (!unidadMedidaExistente) {
         return res.status(404).json({ message: "Unidad de medida no encontrada" });
       }
+    
       req.body.unidadMedida = {
-        valor: req.body.unidadMedidaValor,
-        id: req.body.idUnidadMedida,
+        valor: req.body.unidadMedida.valor,
+        idUnidadMedida: req.body.unidadMedida.idUnidadMedida,
       };
+    } else {
+      return res.status(400).json({ message: "Unidad de medida y su valor son requeridos" });
     }
 
     // Verificar si hay cambios en los datos
     const cambios = {
       idGabinete: req.body.idGabinete || reactivo.idGabinete,
       idMarca: req.body.idMarca || reactivo.idMarca,
-      idUnidadMedida: req.body.idUnidadMedida || reactivo.idUnidadMedida,
       idCategoria: req.body.idCategoria || reactivo.idCategoria,
       idEstadoFisico: req.body.idEstadoFisico || reactivo.idEstadoFisico,
       nombre: req.body.nombre || reactivo.nombre,
@@ -228,7 +222,7 @@ const actualizarReactivo = async (req, res) => {
     };
 
     const noHayCambios = Object.keys(cambios).every(
-      (key) => String(cambios[key]) === String(reactivo[key])
+      (key) => JSON.stringify(cambios[key]) === JSON.stringify(reactivo[key])
     );
 
     if (noHayCambios) {
