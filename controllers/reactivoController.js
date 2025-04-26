@@ -1,11 +1,4 @@
-import {
-  Reactivo,
-  Gabinete,
-  Marca,
-  UnidadMedida,
-  Categoria,
-  EstadoFisico,
-} from "../models/index.js";
+import { Reactivo, Gabinete, Marca, UnidadMedida, Categoria, EstadoFisico } from "../models/index.js";
 import { matchSorter } from "match-sorter";
 
 const consultarReactivos = async (req, res) => {
@@ -17,10 +10,10 @@ const consultarReactivos = async (req, res) => {
     const reactivos = await Reactivo.find({})
       .select("-__v")
       .populate("idGabinete", "nombre -_id")
-      .populate("idMarca", "nombre -_id")
-      .populate("idUnidadMedida", "nombre -_id")
+      .populate("idMarca", "nombre -_id")      
       .populate("idCategoria", "nombre -_id")
       .populate("idEstadoFisico", "nombre -_id")
+      .populate("unidadMedida.idUnidadMedida", "nombre -_id")      
       .where({ status: true })
       .lean(); // Convertir documentos a objetos simples
 
@@ -38,10 +31,8 @@ const consultarReactivos = async (req, res) => {
       : reactivos;
 
     if (reactivosFiltrados.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No se encontraron reactivos con ese nombre" });
-    }
+      return res.status(404).json({ message: "No se encontraron reactivos con ese nombre" });
+    }    
 
     // Respuesta
     res.status(200).json(reactivosFiltrados);
@@ -58,19 +49,17 @@ const consultarReactivoPorId = async (req, res) => {
 
     // Validaciones
     if (!id) {
-      return res
-        .status(400)
-        .json({ message: "ID de reactivo no proporcionado" });
+      return res.status(400).json({ message: "ID de reactivo no proporcionado" });
     }
 
     // Buscar el reactivo por ID en la base de datos
     const reactivo = await Reactivo.findById(id)
       .select("-__v")
       .populate("idGabinete", "nombre -_id")
-      .populate("idMarca", "nombre -_id")
-      .populate("idUnidadMedida", "nombre -_id")
+      .populate("idMarca", "nombre -_id")      
       .populate("idCategoria", "nombre -_id")
       .populate("idEstadoFisico", "nombre -_id")
+      .populate("unidadMedida.idUnidadMedida", "nombre -_id")
       .where({ status: true });
 
     // Validaciones
@@ -92,15 +81,8 @@ const crearReactivo = async (req, res) => {
     const reactivo = new Reactivo(req.body);
 
     // Validaciones
-    if (
-      !reactivo.idGabinete ||
-      !reactivo.idMarca ||
-      !reactivo.idUnidadMedida ||
-      !reactivo.idCategoria
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Faltan datos requeridos para crear el reactivo" });
+    if (!reactivo.idGabinete || !reactivo.idMarca || !reactivo.idCategoria) {
+      return res.status(400).json({ message: "Faltan datos requeridos para crear el reactivo" });
     }
 
     const gabineteExistente = await Gabinete.findById(reactivo.idGabinete);
@@ -111,16 +93,7 @@ const crearReactivo = async (req, res) => {
     const marcaExistente = await Marca.findById(reactivo.idMarca);
     if (!marcaExistente) {
       return res.status(404).json({ message: "Marca no encontrada" });
-    }
-
-    const unidadMedidaExistente = await UnidadMedida.findById(
-      reactivo.idUnidadMedida
-    );
-    if (!unidadMedidaExistente) {
-      return res
-        .status(404)
-        .json({ message: "Unidad de medida no encontrada" });
-    }
+    }    
 
     const idCategoriaExistente = await Categoria.findById(reactivo.idCategoria);
     if (!idCategoriaExistente) {
@@ -134,10 +107,31 @@ const crearReactivo = async (req, res) => {
       return res.status(404).json({ message: "Estado físico no encontrado" });
     }
 
+    // Validación de cantidad
     if (reactivo.cantidad < 0) {
-      return res
-        .status(400)
-        .json({ message: "La cantidad no puede ser negativa" });
+      return res.status(400).json({ message: "La cantidad no puede ser negativa" });
+    }
+
+    if (reactivo.cantidad === undefined) {
+      reactivo.cantidad = 0; // Asignar valor por defecto si no se proporciona
+    }
+
+    // Validación y asignación de código catálogo
+    reactivo.codigoCatalogo = reactivo.codigoCatalogo?.trim() || "N/D";
+
+    if (req.body.unidadMedida && req.body.unidadMedida.valor && req.body.unidadMedida.idUnidadMedida) {
+      const unidadMedidaExistente = await UnidadMedida.findById(req.body.unidadMedida.idUnidadMedida);
+    
+      if (!unidadMedidaExistente) {
+        return res.status(404).json({ message: "Unidad de medida no encontrada" });
+      }
+          
+      reactivo.unidadMedida = {
+        valor: req.body.unidadMedida.valor,
+        idUnidadMedida: req.body.unidadMedida.idUnidadMedida,
+      };
+    } else {
+      return res.status(400).json({ message: "Unidad de medida y su valor son requeridos" });
     }
 
     // Guardar el reactivo en la base de datos
@@ -178,9 +172,7 @@ const actualizarReactivo = async (req, res) => {
         req.body.idUnidadMedida
       );
       if (!unidadMedidaExistente) {
-        return res
-          .status(404)
-          .json({ message: "Unidad de medida no encontrada" });
+        return res.status(404).json({ message: "Unidad de medida no encontrada" });
       }
     }
 
@@ -204,32 +196,43 @@ const actualizarReactivo = async (req, res) => {
 
     // Validación de cantidad
     if (req.body.cantidad !== undefined && req.body.cantidad < 0) {
-      return res
-        .status(400)
-        .json({ message: "La cantidad no puede ser negativa" });
+      return res.status(400).json({ message: "La cantidad no puede ser negativa" });
     }
 
-        // Verificar si hay cambios en los datos
-        const cambios = {
-            idGabinete: req.body.idGabinete || reactivo.idGabinete,
-            idMarca: req.body.idMarca || reactivo.idMarca,
-            idUnidadMedida: req.body.idUnidadMedida || reactivo.idUnidadMedida,
-            idCategoria: req.body.idCategoria || reactivo.idCategoria,
-            idEstadoFisico: req.body.idEstadoFisico || reactivo.idEstadoFisico,            
-            nombre: req.body.nombre || reactivo.nombre,
-            codigoCatalogo: req.body.codigoCatalogo || reactivo.codigoCatalogo,
-            esPeligroso: req.body.esPeligroso || reactivo.esPeligroso,
-            cantidad: req.body.cantidad || reactivo.cantidad
-        };
+    req.body.codigoCatalogo = req.body.codigoCatalogo?.trim() || "N/D";
+
+    // Validación y asignación de unidad de medida
+    if (req.body.unidadMedidaValor && req.body.idUnidadMedida) {
+      const unidadMedidaExistente = await UnidadMedida.findById(req.body.idUnidadMedida);
+      if (!unidadMedidaExistente) {
+        return res.status(404).json({ message: "Unidad de medida no encontrada" });
+      }
+      req.body.unidadMedida = {
+        valor: req.body.unidadMedidaValor,
+        id: req.body.idUnidadMedida,
+      };
+    }
+
+    // Verificar si hay cambios en los datos
+    const cambios = {
+      idGabinete: req.body.idGabinete || reactivo.idGabinete,
+      idMarca: req.body.idMarca || reactivo.idMarca,
+      idUnidadMedida: req.body.idUnidadMedida || reactivo.idUnidadMedida,
+      idCategoria: req.body.idCategoria || reactivo.idCategoria,
+      idEstadoFisico: req.body.idEstadoFisico || reactivo.idEstadoFisico,
+      nombre: req.body.nombre || reactivo.nombre,
+      codigoCatalogo: req.body.codigoCatalogo || reactivo.codigoCatalogo,
+      esPeligroso: req.body.esPeligroso || reactivo.esPeligroso,
+      cantidad: req.body.cantidad || reactivo.cantidad,
+      unidadMedida: req.body.unidadMedida || reactivo.unidadMedida,
+    };
 
     const noHayCambios = Object.keys(cambios).every(
       (key) => String(cambios[key]) === String(reactivo[key])
     );
 
     if (noHayCambios) {
-      return res
-        .status(400)
-        .json({ message: "No se realizaron cambios en el reactivo" });
+      return res.status(400).json({ message: "No se realizaron cambios en el reactivo" });
     }
 
     // Actualizar reactivo

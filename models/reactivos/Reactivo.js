@@ -10,12 +10,7 @@ const reactivoSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Marca', 
         required: false
-    },
-    idUnidadMedida: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'UnidadMedida', 
-        required: true
-    },
+    },    
     idCategoria: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Categoria', 
@@ -43,6 +38,17 @@ const reactivoSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         required: false
+    },
+    unidadMedida: {
+        valor: {
+            type: String,
+            required: true
+        },
+        idUnidadMedida: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'UnidadMedida',
+            required: true
+        }
     },
     status: {
         type: Boolean,
