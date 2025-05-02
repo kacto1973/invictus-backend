@@ -247,4 +247,3 @@ Después de ejecutar el script, verifica que los datos se hayan insertado correc
 
 <br>
 
-> Archivo README.md creado por Pedro López
