@@ -15,9 +15,6 @@ const observarNuevasCalendarizaciones = async () => {
             const nuevaReserva = change.fullDocument;
             const equipo = await Equipo.findById(nuevaReserva.idEquipo);
 
-            const now = new Date();
-            now.setHours(now.getHours() - 7);
-
             let tiempo = new Date(nuevaReserva.fechaFin).getTime() - new Date(nuevaReserva.fechaInicio).getTime();
             let dias = Math.floor(tiempo / (1000 * 3600 * 24));
 
@@ -25,8 +22,7 @@ const observarNuevasCalendarizaciones = async () => {
                 idTipoNotificacion: listaTipoNotificacion[1],
                 idEstadoNotificacion: listaEstadoNotificacion[1],
                 idEquipo: nuevaReserva.idEquipo,
-                descripcion: `El <strong>${equipo.nombre}</strong> ha sido calendarizado por ${dias} dias`,
-                fechaGeneracion: now,
+                descripcion: `El ${equipo.nombre} ha sido calendarizado por ${dias} dias`,
                 status: true
             });
             console.log(`Se acaba de calendarizar el equipo ${equipo.nombre}`);

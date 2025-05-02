@@ -61,6 +61,34 @@ const eliminarNotificacion = async (req, res) => {
     }
 }
 
+const eliminarTodasLasNotificaciones = async (req, res) => {
+    /**
+     Se eliminan todas las notificaciones actuales. Esto no va ser final, falta implementar la papelera.
+     @returns {JSON} - Mensaje de exito o error.
+     */
+    try {
+        // const listaEstadoNotificacion = await conseguirIDEstadoNotificacion();
+        // const notificaciones = await Notificacion.find();
+
+        // Cuando se implemente la papelera
+        // notificaciones.forEach(notificacion => {
+        //     if (notificacion.idEstadoNotificacion.equals(listaEstadoNotificacion[2])) {
+        //         await Notificacion.findByIdAndDelete(notificacion._id);
+        //     } else {
+        //         await Notificacion.findByIdAndUpdate(notificacion._id, {idEstadoNotificacion: listaEstadoNotificacion[2]});
+        //     }
+        // });
+
+        // Por mientras eliminado todo
+        await Notificacion.deleteMany({});
+
+        res.status(200).json({ message: 'Se ha aplicado el cambio a todas las notificaciones.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al eliminar las notificaciones" });
+    }
+}
+
 const cambiarNotificacionALeido = async (req, res) => {
     /**
         Cambia el estado de la notificacion a leido.
@@ -115,5 +143,6 @@ export {
     datosNotificaciones,
     eliminarNotificacion,
     cambiarTodasLasNotificacionesALeido,
-    cambiarNotificacionALeido
+    cambiarNotificacionALeido,
+    eliminarTodasLasNotificaciones
 };

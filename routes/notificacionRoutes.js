@@ -4,12 +4,14 @@ import {
     datosNotificaciones,
     eliminarNotificacion,
     cambiarNotificacionALeido,
-    cambiarTodasLasNotificacionesALeido
+    cambiarTodasLasNotificacionesALeido,
+    eliminarTodasLasNotificaciones
 } from '../controllers/notificacionesController.js';
 
 router.get('/', datosNotificaciones)
 router.post('/eliminar', eliminarNotificacion);
 router.post('/leido', cambiarNotificacionALeido);
 router.post('/leidoTodas', cambiarTodasLasNotificacionesALeido);
+router.get('/eliminarTodas', eliminarTodasLasNotificaciones);
 
 export default router;

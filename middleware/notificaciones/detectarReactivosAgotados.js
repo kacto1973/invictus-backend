@@ -18,14 +18,11 @@ const observarAgotados = async () => {
         if (nuevoValor === 0) { // Agrega la notificacion si la cantidad es 0
             const existeNotificacion = await Notificacion.findOne({ idReactivo, status: true });
             if (!existeNotificacion) { // Esta consigue la fecha actual en UTC
-                const fechaActual = new Date();
-                fechaActual.setHours(fechaActual.getHours() - 7);
                 await Notificacion.create({
                     idTipoNotificacion: listaTipoNotificacion[0], // Reactivo Agotado
                     idEstadoNotificacion: listaEstadoNotificacion[1], // Sin leer
                     idReactivo: idReactivo,
-                    descripcion: `Actualmente no contamos con <strong>${reactivo.nombre}</strong> en inventario.`,
-                    fechaGeneracion: fechaActual,
+                    descripcion: `Actualmente no contamos con ${reactivo.nombre} en inventario.`,
                     status: true
                 });
                 console.log(`El Reactivo ${reactivo.nombre} esta agotado. Se ha creado una notificacion.`);

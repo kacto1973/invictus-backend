@@ -35,8 +35,7 @@ const observarMantenimientos = () => {
                         idEstadoNotificacion: listaIDEstado[1], // Sin leer
                         idEquipo: mantenimiento.idEquipo,
                         idMantenimiento: mantenimiento._id,
-                        descripcion: `El equipo <strong>${documentoEquipo.nombre}</strong> se encuentra bajo mantenimiento.`,
-                        fechaGeneracion: now,
+                        descripcion: `El equipo ${documentoEquipo.nombre} se encuentra bajo mantenimiento.`,
                         status: true
                     });
 
