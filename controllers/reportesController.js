@@ -37,6 +37,26 @@ function cargarImports() { // No se utiliza, solo es para que no me borre los im
 
 const bucketName = "pdfs";
 
+async function eliminarPDFSupa(nombre) {
+    try {
+        nombre = nombre.replace("%20", " ");
+
+        const { data, error } = await supabase.storage
+            .from(bucketName)
+            .remove([`docs/${nombre}.pdf`]);
+
+        if (error) {
+            console.error('Error al eliminar el archivo:', error);
+            return {error: error};
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Error al eliminar el PDF:", error);
+        return {error: error}
+    }
+}
+
 const conseguirTodosLosReportes = async (req, res) => {
     /**
      * Obtiene todos los reportes de la base de datos.
@@ -44,6 +64,7 @@ const conseguirTodosLosReportes = async (req, res) => {
      */
     try {
         const reportes = await Reporte.find()
+            .sort({ fechaGeneracion: -1 })
             .populate("idEstadoReporte");
         res.status(200).json(reportes);
     } catch (error) {
@@ -113,9 +134,20 @@ function calcularLineaTendencia(data) {
     }));
 }
 
+function generarMensajeTendencia(inicio, tendencia, valorAlAzar){
+    console.log(tendencia);
+    if (Math.abs(tendencia) < 0.0005) {
+        return `${inicio} se han mantenido en ${valorAlAzar.toFixed(4)}`;
+    } else if (tendencia > 0) {
+        return `${inicio} suben en promedio ${tendencia.toFixed(4)} al día`;
+    } else {
+        return `${inicio} bajan en promedio ${Math.abs(tendencia).toFixed(4)} al día`;
+    }
+}
+
 async function crearGrafico(opcion) {
-    // graficaEntradasSalidas     = 1
-    // graficaCategoriasReactivos = 2
+    // graficaCategoriasReactivos = 1
+    // graficaEntradasSalidas     = 2
     // graficaReactivosAgotados   = 3
     // graficaUsodeEquipos        = 4
     // graficaServicioEquipos     = 5
@@ -139,10 +171,15 @@ async function crearGrafico(opcion) {
             const labels = Object.keys(categorias);
             const data = Object.values(categorias);
 
+            let total = 0;
+            data.forEach(r => {
+                total += r;
+            })
+
             return await chartCanvas.renderToBuffer({
                 type: 'pie',
                 data: {
-                    labels: labels.map((label, i) => `${label} (${data[i]})`),
+                    labels: labels.map((label, i) => `${label} (${data[i]}) (${Math.round((data[i] / total) * 10000) / 100}%)`),
                     datasets: [{
                         label: 'Distribución de Reactivos',
                         data,
@@ -166,15 +203,17 @@ async function crearGrafico(opcion) {
                                 }
                             }
                         },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
-                                    return `${label}: ${value}`;
-                                }
-                            }
-                        }
+                        // tooltip: {
+                        //     callbacks: {
+                        //         label: function (context) {
+                        //             const label = context.label.split('(')[0].trim();
+                        //             const value = context.raw || 0;
+                        //             const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                        //             const porcentaje = ((value / total) * 100).toFixed(1);
+                        //             return `${label} ${value} (${porcentaje}%)`;
+                        //         }
+                        //     }
+                        // }
                     }
                 }
             });
@@ -200,15 +239,17 @@ async function crearGrafico(opcion) {
                 }
             });
 
+            const total = totalEntradas + totalSalidas;
+
             return await chartCanvas.renderToBuffer ({
                 type: 'pie',
                 data: {
                     labels: [
-                        `Entradas (${totalEntradas})`,
-                        `Salidas (${totalSalidas})`
+                        `Entradas (${totalEntradas}) (${Math.round((totalEntradas / total) * 10000) / 100}%)`,
+                        `Salidas (${totalSalidas}) (${Math.round((totalSalidas / total) * 10000) / 100}%)`
                     ],
                     datasets: [{
-                        label: 'Movimientos d Reactivos',
+                        label: 'Movimientos de Reactivos',
                         data: [totalEntradas, totalSalidas],
                         backgroundColor: generarColores(2),
                     }]
@@ -230,15 +271,15 @@ async function crearGrafico(opcion) {
                                 }
                             }
                         },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
-                                    return `${label}: ${value}`;
-                                }
-                            }
-                        }
+                        // tooltip: {
+                        //     callbacks: {
+                        //         label: function (context) {
+                        //             const label = context.label || '';
+                        //             const value = context.raw || 0;
+                        //             return `${label}: ${value}`;
+                        //         }
+                        //     }
+                        // }
                     }
                 }
             });
@@ -256,12 +297,14 @@ async function crearGrafico(opcion) {
             const TotalReactivosAgotados = TotalReactivosAgotadosLista[0].totalCantidad;
             const TotalReactivos = TotalReactivosLista[0].totalCantidad - TotalReactivosAgotados;
 
+            const total = TotalReactivosAgotados + TotalReactivos;
+
             return await chartCanvas.renderToBuffer({
                 type: 'pie',
                 data: {
                     labels: [
-                        `Con Stock (${TotalReactivos})`,
-                        `Sin Stock (${TotalReactivosAgotados})`
+                        `Con Stock (${TotalReactivos}) (${Math.round((TotalReactivos / total) * 10000) / 100}%)`,
+                        `Sin Stock (${TotalReactivosAgotados}) (${Math.round((TotalReactivosAgotados / total) * 10000) / 100}%)`
                     ],
                     datasets: [{
                         label: 'Reactivos',
@@ -286,15 +329,15 @@ async function crearGrafico(opcion) {
                                 }
                             }
                         },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
-                                    return `${label}: ${value}`;
-                                }
-                            }
-                        }
+                        // tooltip: {
+                        //     callbacks: {
+                        //         label: function (context) {
+                        //             const label = context.label || '';
+                        //             const value = context.raw || 0;
+                        //             return `${label}: ${value}`;
+                        //         }
+                        //     }
+                        // }
                     }
                 }
             });
@@ -340,6 +383,8 @@ async function crearGrafico(opcion) {
 
             const tendenciaData = calcularLineaTendencia(scatterData);
 
+            const mensajeTendencia = generarMensajeTendencia("Las Reservas", (tendenciaData[tendenciaData.length - 1].y - tendenciaData[0].y) / 30, tendenciaData[0].y);
+
             return await chartCanvas.renderToBuffer({
                 type: 'scatter',
                 data: {
@@ -353,7 +398,7 @@ async function crearGrafico(opcion) {
                             pointHoverRadius: 7,
                         },
                         {
-                            label: 'Línea de Tendencia',
+                            label: `Línea de Tendencia ( ${mensajeTendencia} )`,
                             data: tendenciaData,
                             borderColor: '#ff6961',
                             backgroundColor: 'transparent',
@@ -381,15 +426,15 @@ async function crearGrafico(opcion) {
                                 }
                             }
                         },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    const label = context.dataset.label || '';
-                                    const value = context.raw.y || 0;
-                                    return `${label}: ${value.toFixed(2)}`;
-                                }
-                            }
-                        }
+                        // tooltip: {
+                        //     callbacks: {
+                        //         label: function (context) {
+                        //             const label = context.dataset.label || '';
+                        //             const value = context.raw.y || 0;
+                        //             return `${label}: ${value.toFixed(2)}`;
+                        //         }
+                        //     }
+                        // }
                     },
                     scales: {
                         x: {
@@ -456,6 +501,8 @@ async function crearGrafico(opcion) {
 
             const tendenciaData = calcularLineaTendencia(scatterData);
 
+            const mensajeTendencia = generarMensajeTendencia("Los Servicios", (tendenciaData[tendenciaData.length - 1].y - tendenciaData[0].y) / 30, tendenciaData[0].y);
+
             return await chartCanvas.renderToBuffer({
                 type: 'scatter',
                 data: {
@@ -469,7 +516,7 @@ async function crearGrafico(opcion) {
                             pointHoverRadius: 7,
                         },
                         {
-                            label: 'Línea de Tendencia',
+                            label: `Línea de Tendencia ( ${mensajeTendencia} )`,
                             data: tendenciaData,
                             borderColor: '#ff6961',
                             backgroundColor: 'transparent',
@@ -497,15 +544,15 @@ async function crearGrafico(opcion) {
                                 }
                             }
                         },
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    const label = context.dataset.label || '';
-                                    const value = context.raw.y || 0;
-                                    return `${label}: ${value.toFixed(2)}`;
-                                }
-                            }
-                        }
+                        // tooltip: {
+                        //     callbacks: {
+                        //         label: function (context) {
+                        //             const label = context.dataset.label || '';
+                        //             const value = context.raw.y || 0;
+                        //             return `${label}: ${value.toFixed(2)}`;
+                        //         }
+                        //     }
+                        // }
                     },
                     scales: {
                         x: {
@@ -829,24 +876,6 @@ async function crearEntradaReporte(nombre, url, tipo, id){
     }
 }
 
-async function eliminarPDFSupa(nombre) {
-    try {
-        const { data, error } = await supabase.storage
-            .from(bucketName)
-            .remove([`docs/${nombre}.pdf`]);
-
-        if (error) {
-            console.error('Error al eliminar el archivo:', error);
-            return {error: error};
-        }
-
-        return data;
-    } catch (error) {
-        console.error("Error al eliminar el PDF:", error);
-        return {error: error}
-    }
-}
-
 const crearReporte = async (req, res) => {
     /**
      * Genera un reporte en PDF según las opciones proporcionadas, lo sube a Supebase y hace una entrada en MongoDB.
@@ -902,7 +931,7 @@ const crearReporte = async (req, res) => {
 
         const insertarLogo = () => {
             const logoWidth = 50;
-            const logoHeight = 50;
+            const logoHeight = 40;
             const x = doc.page.width - logoWidth - 20;
             const y = 20;
 
@@ -1028,7 +1057,6 @@ const eliminarReporte = async (req, res) => {
         }
 
         const fileName = reporte.urlReporte.split('/').pop().replace('.pdf', '');
-        console.log("Nombre archivo:", fileName);
 
         const verificacionSupa = await eliminarPDFSupa(fileName);
         await Reporte.findByIdAndDelete(id);
@@ -1039,6 +1067,7 @@ const eliminarReporte = async (req, res) => {
             return;
         }
 
+        console.log("Archivo PDF elimado:", fileName);
         res.status(200).json({ message: "Reporte eliminado exitosamente" });
     } catch (error) {
         console.error(error);
