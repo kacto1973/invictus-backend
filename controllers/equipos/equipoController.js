@@ -19,9 +19,34 @@ const getEquipos = async (req, res) => {
     let query = req.query.name;
 
     // buscar solo equipos que no estan "eliminados"
-    let equipos = await Equipo.find({ status: { $ne: "Eliminado" } }).select(
-      "_id nombre urlImagen status"
-    );
+    let equipos = await Equipo.aggregate([
+      { $match: { status: { $ne: "Eliminado" } } },
+      {
+        $lookup: {
+          from: "mantenimientos",
+          localField: "_id",
+          foreignField: "idEquipo",
+          as: "mantenimientos",
+          pipeline: [{ $match: { status: true } }],
+        },
+      },
+      {
+        $lookup: {
+          from: "reservas",
+          localField: "_id",
+          foreignField: "idEquipo",
+          as: "reservas",
+          pipeline: [{ $match: { status: true } }],
+        },
+      },
+      {
+        $project: {
+          __v: 0,
+          "reservas.idEquipo": 0,
+          "mantenimientos.idEquipo": 0,
+        },
+      },
+    ]);
     if (query) equipos = matchSorter(equipos, query);
 
     if (!equipos.length) {
