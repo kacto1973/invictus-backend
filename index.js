@@ -11,6 +11,7 @@ import reactivoRoutes from "./routes/reactivoRoutes.js";
 import equipoRoutes from "./routes/equipos/equipoRoutes.js";
 import reservaRoutes from "./routes/equipos/reservaRoutes.js";
 import mantenimientoRoutes from "./routes/equipos/mantenimientoRoutes.js";
+import movimientoRoutes from "./routes/movimientoRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use("/api/reactivos", reactivoRoutes);
 app.use("/api/equipos", equipoRoutes);
 app.use("/api/equipos/reserva", reservaRoutes);
 app.use("/api/equipos/mantenimiento", mantenimientoRoutes);
+app.use("/api/movimientos", movimientoRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
