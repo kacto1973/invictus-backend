@@ -1,21 +1,21 @@
-import conectarDB from '../config/db.js';
-import EstadoFisico from '../models/reactivos/EstadoFisico.js';
+import conectarDB from "../config/db.js";
+import EstadoFisico from "../models/reactivos/EstadoFisico.js";
 
 const seedEstadoFisico = async () => {
     try {
         await conectarDB();
-        await EstadoFisico.deleteMany(); // Limpiar la colección
+        await EstadoFisico.deleteMany(); // Limpiar la colección antes de sembrar datos 
 
-        // Datos de ejemplo
-        const estados = [
-            { nombre: "Solido" },
-            { nombre: "Liquido" },
+        // Definir los estados físicos
+        const estadosFisicos = [
+            { nombre: "Sólido" },
+            { nombre: "Líquido" }            
         ];
 
-        await EstadoFisico.insertMany(estados); // Insertar los datos de ejemplo
-        console.log("Estados físicos sembrados exitosamente");
+        await EstadoFisico.insertMany(estadosFisicos);
+        console.log("Estados físicos creados exitosamente.");
     } catch (error) {
-        console.error("Error al conectar a la base de datos:", error);
+        console.error("Error al crear los estados físicos:", error);
         throw error;
     }
 }

@@ -6,7 +6,7 @@ const estadoNotificacionSchema = new mongoose.Schema({
         required: true,
         unique: true
     }
-})
+}, { collection: 'EstadoNotificacion' });
 
 const EstadoNotificacion = mongoose.model("EstadoNotificacion", estadoNotificacionSchema);
 export default EstadoNotificacion;

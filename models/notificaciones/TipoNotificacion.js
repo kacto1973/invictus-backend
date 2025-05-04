@@ -6,7 +6,7 @@ const tipoNotificacionSchema = new mongoose.Schema({
         required: true,
         unique: true
       }
-})
+}, { collection: 'TipoNotificacion' });
 
 const TipoNotificacion = mongoose.model("TipoNotificacion", tipoNotificacionSchema);
 export default TipoNotificacion;

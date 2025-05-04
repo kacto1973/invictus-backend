@@ -6,7 +6,7 @@ const unidadMedidaSchema = new mongoose.Schema({
         required: true,
         unique: true
     }
-});
+}, { collection: 'UnidadMedida' });
 
 const UnidadMedida = mongoose.model('UnidadMedida', unidadMedidaSchema);
 export default UnidadMedida;

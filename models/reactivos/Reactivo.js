@@ -9,14 +9,14 @@ const reactivoSchema = new mongoose.Schema({
     idMarca: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Marca', 
-        required: true
-    },
-    idUnidadMedida: {
+        required: false
+    },    
+    idCategoria: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'UnidadMedida', 
+        ref: 'Categoria', 
         required: true
     },
-    estadoFisico: {
+    idEstadoFisico: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'EstadoFisico', 
         required: true
@@ -30,21 +30,36 @@ const reactivoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    codigoCatalogo: {
+        type: String,
+        required: false,
+        unique: false
+    },
     esPeligroso: {
         type: Boolean,
         required: true
     },
     cantidad: {
         type: Number,
-        min: 0,
-        required: true
+        default: 0,
+        required: false
+    },
+    unidadMedida: {
+        valor: {
+            type: String,
+            required: true
+        },
+        idUnidadMedida: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'UnidadMedida',
+            required: true
+        }
     },
     status: {
         type: Boolean,
-        default: true,
-        required: true
+        default: true
     }
-});
+}, { collection: 'Reactivo' });
 
 const Reactivo = mongoose.model('Reactivo', reactivoSchema);
 export default Reactivo;
