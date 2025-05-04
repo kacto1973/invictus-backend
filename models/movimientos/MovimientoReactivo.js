@@ -24,7 +24,7 @@ const movimientoReactivoSchema = new mongoose.Schema({
       type: Date,
       default: Date.now,
     }
-});
+}, { collection: 'MovimientoReactivo' });
 
 const MovimientoReactivo = mongoose.model("MovimientoReactivo", movimientoReactivoSchema);
 export default MovimientoReactivo;

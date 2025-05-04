@@ -23,7 +23,7 @@ const reporteSchema = new mongoose.Schema({
         type: Boolean,
         required: true
       }
-});
+}, { collection: 'Reporte' });
 
 const Reporte = mongoose.model('Reporte', reporteSchema);
 export default Reporte;

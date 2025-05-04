@@ -5,7 +5,7 @@ const marcaSchema = new mongoose.Schema({
         type: String,
         required: true
     }
-});
+}, { collection: 'Marca' });
 
 const Marca = mongoose.model('Marca', marcaSchema);
 export default Marca;

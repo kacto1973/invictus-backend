@@ -6,7 +6,7 @@ const estadoFisicoSchema = new mongoose.Schema({
         required: true,
         unique: true
     }
-});
+}, { collection: 'EstadoFisico' });
 
 const EstadoFisico = mongoose.model('EstadoFisico', estadoFisicoSchema);
 export default EstadoFisico;

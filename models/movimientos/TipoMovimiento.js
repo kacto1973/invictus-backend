@@ -6,7 +6,7 @@ const tipoMovimientoSchema = new mongoose.Schema({
         required: true,
         unique: true
     }
-});
+}, { collection: 'TipoMovimiento' });
 
 const TipoMovimiento = mongoose.model('TipoMovimiento', tipoMovimientoSchema);
 export default TipoMovimiento;
