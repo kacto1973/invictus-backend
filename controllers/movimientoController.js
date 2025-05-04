@@ -2,23 +2,52 @@ import MovimientoReactivo from "../models/movimientos/MovimientoReactivo.js";
 import TipoMovimiento from "../models/movimientos/TipoMovimiento.js";
 import Reactivo from "../models/reactivos/Reactivo.js";
 
+import { matchSorter } from "match-sorter";
+
 const getMovimientos = async (req, res) => {
   try {
-    let query = req.query.name;
+    let { name } = req.query;
 
-    let movimientos = MovimientoReactivo.find()
+    let movimientos = await MovimientoReactivo.find()
       .populate("idTipoMovimiento", "nombre")
-      .populate("idReactivo", "nombre");
+      .populate("idReactivo", "nombre cantidad");
 
-    console.log(movimientos);
-  } catch (error) {}
+    if (!movimientos || movimientos.length === 0) {
+      return res.status(404).json({ error: "No se encontraron movimientos" });
+    }
+
+    if (name) {
+      movimientos = matchSorter(movimientos, name, {
+        keys: [(item) => item.idReactivo?.nombre || ""],
+      });
+    }
+
+    const movimientosFormateados = movimientos.map((mov) => ({
+      _id: mov._id,
+      descripcion: mov.descripcion,
+      cantidad: mov.cantidad,
+      fecha: mov.fecha,
+      tipoMovimiento: mov.idTipoMovimiento?.nombre || "Desconocido",
+      reactivo: {
+        id: mov.idReactivo?._id,
+        nombre: mov.idReactivo?.nombre,
+        cantidad: mov.idReactivo?.cantidad,
+      },
+    }));
+
+    return res.json(movimientosFormateados);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error: `Error al obtener movimientos: ${error}` });
+  }
 };
 
 const getTipoMovimientos = async (req, res) => {
   try {
-    let tiposMovimiento = TipoMovimiento.find();
+    let tiposMovimiento = await TipoMovimiento.find();
 
-    if (!tiposMovimiento) {
+    if (!tiposMovimiento || tiposMovimiento.length === 0) {
       return res
         .status(404)
         .json({ error: "No existe ningún tipo de movimiento" });
@@ -68,7 +97,9 @@ const createMovimiento = async (req, res) => {
       reactivo.cantidad += cantidad;
     }
 
-    const nuevoMovimiento = new Movimiento({
+    console.log("Reactivo antes de guardar:", reactivo);
+
+    const nuevoMovimiento = new MovimientoReactivo({
       idReactivo,
       idTipoMovimiento,
       descripcion,
