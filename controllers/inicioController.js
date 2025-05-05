@@ -12,6 +12,7 @@ async function datosInicio() {
         - Datos para la grafica de estado fisico
      @returns {JSON} - Objeto con los datos necesarios para la vista de inicio.
      */
+     
     const TotalReactivos = await Reactivo.aggregate([
         {
             $match: { status: true }
@@ -39,7 +40,7 @@ async function datosInicio() {
     const TotalReactivosAdquiridos = await MovimientoReactivo.aggregate([
         {
             $lookup: {
-                from: "tipomovimientos",
+                from: "TipoMovimiento",
                 localField: "idTipoMovimiento",
                 foreignField: "_id",
                 as: "tipoMovimiento"
@@ -62,17 +63,17 @@ async function datosInicio() {
     const datosGraficaUnidadMedida = await Reactivo.aggregate([
         {
             $lookup: {
-                from: "unidadmedidas",
-                localField: "idUnidadMedida",
+                from: "UnidadMedida",
+                localField: "unidadMedida.idUnidadMedida",
                 foreignField: "_id",
-                as: "idUnidadMedida"
+                as: "unidadMedidaInfo"
             }
         },
-        { $unwind: "$idUnidadMedida" },
+        { $unwind: "$unidadMedidaInfo" },
         { $match: { status: true } },
         {
             $group: {
-                _id: "$idUnidadMedida.nombre", // Campo corregido
+                _id: "$unidadMedidaInfo.nombre",
                 totalCantidad: { $sum: "$cantidad" }
             }
         }
@@ -81,8 +82,8 @@ async function datosInicio() {
     const datosGraficaEstadoFisico = await Reactivo.aggregate([
         {
             $lookup: {
-                from: "estadofisicos", // Nombre correcto de la colección
-                localField: "estadoFisico",
+                from: "EstadoFisico",
+                localField: "idEstadoFisico",
                 foreignField: "_id",
                 as: "estadoFisico"
             }

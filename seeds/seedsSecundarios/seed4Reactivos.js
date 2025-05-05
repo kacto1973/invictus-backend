@@ -28,10 +28,11 @@ const seedReactivos = async () => {
                 esPeligroso: true,
                 cantidad: 500,
                 gabinete: "Gabinete 1",
-                categoria: "Ácidos y Bases",
-                marca: "SIGMA",
+                // categoria: "Ácidos y Bases",
+                // marca: "SIGMA",
                 unidad: "l",
-                estado: "Liquido"
+                estado: "Líquido",
+                // codigoCatalogo: "AC-001"
             },
             {
                 nombre: "Etanol",
@@ -41,7 +42,8 @@ const seedReactivos = async () => {
                 categoria: "Solventes",
                 marca: "Bio-Rad",
                 unidad: "ml",
-                estado: "Liquido"
+                estado: "Líquido",
+                codigoCatalogo: "SC-002"
             },
             {
                 nombre: "Sulfato de Cobre",
@@ -51,7 +53,8 @@ const seedReactivos = async () => {
                 categoria: "Sales Inorgánicas",
                 marca: "GOLDEN BELL",
                 unidad: "kg",
-                estado: "Solido"
+                estado: "Sólido",
+                codigoCatalogo: "HS-003"
             },
             {
                 nombre: "Nitrato de Plata",
@@ -61,7 +64,8 @@ const seedReactivos = async () => {
                 categoria: "Sales Inorgánicas",
                 marca: "J.T. Baker",
                 unidad: "g",
-                estado: "Solido"
+                estado: "Sólido",
+                codigoCatalogo: "NP-004"
             },
             {
                 nombre: "Fosfato de Calcio",
@@ -71,7 +75,8 @@ const seedReactivos = async () => {
                 categoria: "Sales Inorgánicas",
                 marca: "VETEC",
                 unidad: "mg",
-                estado: "Solido"
+                estado: "Sólido",
+                codigoCatalogo: "CS-005"
             },
             {
                 nombre: "Acetona",
@@ -81,7 +86,8 @@ const seedReactivos = async () => {
                 categoria: "Solventes",
                 marca: "FAGA LAB",
                 unidad: "ml",
-                estado: "Liquido"
+                estado: "Líquido",
+                codigoCatalogo: "AC-001"
             },
             {
                 nombre: "Cloruro de Sodio",
@@ -91,7 +97,8 @@ const seedReactivos = async () => {
                 categoria: "Sales Inorgánicas",
                 marca: "NutriCology",
                 unidad: "g",
-                estado: "Solido"
+                estado: "Sólido",
+                codigoCatalogo: "AC-001"
             },
             {
                 nombre: "Solución Salina",
@@ -101,7 +108,8 @@ const seedReactivos = async () => {
                 categoria: "Reactivos Químicos",
                 marca: "PIERCE",
                 unidad: "ml",
-                estado: "Liquido"
+                estado: "Líquido",
+                codigoCatalogo: "AC-001"
             },
             {
                 nombre: "Agar",
@@ -111,7 +119,8 @@ const seedReactivos = async () => {
                 categoria: "Medios de Cultivo",
                 marca: "Molecular Bioproducts",
                 unidad: "kg",
-                estado: "Solido"
+                estado: "Sólido",
+                codigoCatalogo: "AC-001"
             },
             {
                 nombre: "Bicarbonato de Sodio",
@@ -121,24 +130,30 @@ const seedReactivos = async () => {
                 categoria: "Sales Inorgánicas",
                 marca: "ALDRICH",
                 unidad: "mg",
-                estado: "Solido"
+                estado: "Sólido",
+                codigoCatalogo: "AC-001"
             }
         ];
 
-
+        let i = 0;
+        const valores = [120, 1000, 100, 500, 700, 800, 5000, 100, 2000, 1000]
         for (const item of reactivos) {
             const nuevoReactivo = new Reactivo({
                 nombre: item.nombre,
                 esPeligroso: item.esPeligroso,
                 cantidad: item.cantidad,
+                codigoCatalogo: item.codigoCatalogo ?? null,
                 idGabinete: getIdByName(gabinetes, item.gabinete),
                 idCategoria: getIdByName(categorias, item.categoria),
                 idMarca: getIdByName(marcas, item.marca),
-                idUnidadMedida: getIdByName(unidades, item.unidad),
-                estadoFisico: getIdByName(estados, item.estado),
+                unidadMedida: {
+                    valor: valores[i],
+                    idUnidadMedida: getIdByName(unidades, item.unidad)
+                },
+                idEstadoFisico: getIdByName(estados, item.estado),
                 status: true
             });
-
+            i += 1;
             await nuevoReactivo.save();
             console.log(`Reactivo "${item.nombre}" guardado.`);
         }

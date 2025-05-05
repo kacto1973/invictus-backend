@@ -164,7 +164,7 @@ async function crearGrafico(opcion) {
 
             const categorias = {};
             reactivos.forEach(r => {
-                const nombre = r.idCategoria.nombre;
+                const nombre = r.idCategoria?.nombre ?? "ND";
                 categorias[nombre] = (categorias[nombre] || 0) + r.cantidad;
             });
 
@@ -607,25 +607,28 @@ async function crearTabla(opcion){
     switch (opcion) {
         case 1: {
             const reactivos = await Reactivo.find({status: true})
-                .populate("idUnidadMedida")
-                .populate("estadoFisico")
+                .populate("unidadMedida.idUnidadMedida")
+                .populate("idEstadoFisico")
                 .populate("idMarca")
                 .populate("idGabinete")
                 .populate("idCategoria");
 
             let datos = [];
+            
+            console.log(reactivos);
 
             reactivos.forEach(rea => {
                 datos.push([
                     rea.nombre,
                     rea.idGabinete.nombre,
-                    rea.idCategoria.nombre ?? "ND",
-                    rea.idMarca.nombre,
-                    rea.idUnidadMedida.nombre,
-                    rea.estadoFisico.nombre,
-                    rea.esPeligroso === true ? "Si" :
-                        rea.esPeligroso === false ? "No" :
-                            "ND",
+                    rea.idCategoria?.nombre ?? "ND",
+                    rea.idMarca?.nombre ?? "ND",
+                    rea.unidadMedida.valor.toString() + rea.unidadMedida.idUnidadMedida.nombre,
+                    rea.idEstadoFisico.nombre,
+                    // rea.esPeligroso === true ? "Si" :
+                    //     rea.esPeligroso === false ? "No" :
+                    //         "ND",
+                    rea.codigoCatalogo ?? "ND",
                     rea.cantidad
                 ]);
             })
@@ -639,7 +642,7 @@ async function crearTabla(opcion){
                     "Marca",
                     "Unidad",
                     "Estado Fisico",
-                    "¿Es Peligroso?",
+                    "Catalogo",
                     "Cantidad"
                 ],
                 rows: datos,
@@ -828,7 +831,7 @@ async function generarNombreUnico() {
         .filter(file => file.name.toLowerCase().endsWith('.pdf'))
         .map(file => file.name.replace(/\.pdf$/i, ''));
 
-    let nombreBase = new Date().toISOString().slice(0, 10);
+    const nombreBase = dayjs().tz('America/Hermosillo').format('YYYY-MM-DD');
     let nombreFinal = nombreBase;
     let contador = 1;
 
