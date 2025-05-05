@@ -90,12 +90,12 @@ function insertarImagenConChequeo(doc, imageBuffers) {
 
     const pageHeight = doc.page.height;
 
-    let currentY = margin;
+    let currentY = doc.y;
 
     imageBuffers.forEach((imgBuffer) => {
         if (currentY + imageHeight > pageHeight - margin) {
             doc.addPage();
-            currentY = margin;
+            currentY = doc.y;
         }
 
         doc.image(imgBuffer, margin, currentY, {
@@ -135,7 +135,6 @@ function calcularLineaTendencia(data) {
 }
 
 function generarMensajeTendencia(inicio, tendencia, valorAlAzar){
-    console.log(tendencia);
     if (Math.abs(tendencia) < 0.0005) {
         return `${inicio} se han mantenido en ${valorAlAzar.toFixed(4)}`;
     } else if (tendencia > 0) {
@@ -614,8 +613,6 @@ async function crearTabla(opcion){
                 .populate("idCategoria");
 
             let datos = [];
-            
-            console.log(reactivos);
 
             reactivos.forEach(rea => {
                 datos.push([
@@ -932,17 +929,76 @@ const crearReporte = async (req, res) => {
 
         const logoPath = './assets/DICTUS-logo.png';
 
-        const insertarLogo = () => {
-            const logoWidth = 50;
-            const logoHeight = 40;
-            const x = doc.page.width - logoWidth - 20;
-            const y = 20;
+        const insertarEncabezado = (tituloReporte = "Nombre del reporte", firstPage) => {
+            if (firstPage) {
+                const pageWidth = doc.page.width;
+                const headerHeight = 70;
 
-            doc.image(logoPath, x, y, { width: logoWidth, height: logoHeight });
+                doc.rect(0, 0, pageWidth, headerHeight)
+                    .fill('#DBACFD');
+
+                const logoBoxWidth = 120;
+                doc.rect(pageWidth - logoBoxWidth, 0, logoBoxWidth, headerHeight)
+                    .fill('#CA88FC');
+
+                const logoWidth = 60;
+                const logoHeight = 60;
+                const logoX = pageWidth - logoBoxWidth + (logoBoxWidth - logoWidth) / 2;
+                const logoY = (headerHeight - logoHeight) / 2;
+                doc.image(logoPath, logoX, logoY, {width: logoWidth, height: logoHeight});
+
+                const textBoxWidth = pageWidth - logoBoxWidth - 60;
+                doc
+                    .font('Helvetica')
+                    .fillColor('white')
+                    .fontSize(18)
+                    .text('Reporte del Día', 50, 20, { // <-- cambiamos de 35 a 20
+                        width: textBoxWidth,
+                        align: 'left'
+                    });
+
+                doc
+                    .font('Helvetica-Bold')
+                    .fillColor('white')
+                    .fontSize(18)
+                    .text(tituloReporte, 50, 45, {
+                        width: textBoxWidth,
+                        align: 'left'
+                    });
+            } else {
+                const pageWidth = doc.page.width;
+                const headerHeight = 50;
+
+                doc.rect(0, 0, pageWidth, headerHeight)
+                    .fill('#DBACFD');
+
+                const logoBoxWidth = 80;
+                doc.rect(pageWidth - logoBoxWidth, 0, logoBoxWidth, headerHeight)
+                    .fill('#CA88FC');
+
+                const logoWidth = 45;
+                const logoHeight = 45;
+                const logoX = pageWidth - logoBoxWidth + (logoBoxWidth - logoWidth) / 2;
+                const logoY = (headerHeight - logoHeight) / 2;
+                doc.image(logoPath, logoX, logoY, {width: logoWidth, height: logoHeight});
+
+                const textBoxWidth = pageWidth - logoBoxWidth - 60;
+
+                doc
+                    .font('Helvetica-Bold')
+                    .fillColor('white')
+                    .fontSize(18)
+                    .text(tituloReporte, 50, 20, {
+                        width: textBoxWidth,
+                        align: 'left'
+                    });
+            }
+            if (firstPage) doc.y = 90;
+            else doc.y = 70;
         };
 
-        insertarLogo();
-        doc.on('pageAdded', insertarLogo);
+        insertarEncabezado("Reporte " + nombrePDF, true);
+        doc.on('pageAdded', () => insertarEncabezado("Reporte " + nombrePDF, false));
 
         let tablas = [];
         let huboPaginaAnterior = false;
