@@ -86,7 +86,7 @@ const createReserva = async (req, res) => {
       return res.status(500).json({ error: "Error al reservar equipo" });
     }
 
-    new Date(new Date().setUTCHours(0, 0, 0, 0));
+    const hoy = new Date(new Date().setUTCHours(0, 0, 0, 0));
     if (
       new Date(detallesReserva.fechaInicio) <= hoy &&
       new Date(detallesReserva.fechaFin) >= hoy
