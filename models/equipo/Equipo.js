@@ -1,27 +1,31 @@
 import mongoose from "mongoose";
 
-const equipoSchema = new mongoose.Schema({
+const equipoSchema = new mongoose.Schema(
+  {
     nombre: {
       type: String,
-      required: true
+      required: true,
     },
     descripcion: {
       type: String,
-      required: true
+      required: true,
     },
     urlImagen: {
       type: String,
-      required: true
+      required: true,
     },
     requiereMantenimiento: {
       type: Boolean,
-      required: true
+      required: true,
     },
     status: {
-      type: Boolean,
-      required: true
-    }
-}, { collection: 'Equipo' });
+      type: String,
+      enum: ["Liberado", "En mantenimiento", "En reserva", "Eliminado"],
+      required: true,
+    },
+  },
+  { collection: "Equipo" }
+);
 
-const Equipo = mongoose.model('Equipo', equipoSchema);
+const Equipo = mongoose.model("Equipo", equipoSchema);
 export default Equipo;
