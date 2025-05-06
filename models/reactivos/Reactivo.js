@@ -10,7 +10,7 @@ const reactivoSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Marca', 
         required: false
-    },
+    },    
     idEstadoFisico: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'EstadoFisico', 
