@@ -1,17 +1,18 @@
 import conectarDB from "../config/db.js";
-import TipoReporte from "../models/reportes/TipoReporte.js";
+import EstadoReporte from "../models/reportes/EstadoReporte.js";
 
-const seedTipoReporte = async () => {
+const seedEstadoReporte = async () => {
     try {
         await conectarDB();
-        await TipoReporte.deleteMany(); // Elimina todos los registros existentes
+        await EstadoReporte.deleteMany(); // Elimina todos los registros existentes
 
-        const tiposReporte = [
-            { nombre: "Reactivos" },
-            { nombre: "Equipos" }
+        const estadosReporte = [
+            { nombre: "En proceso" },
+            { nombre: "Error" },
+            { nombre: "Completado"}
         ];
 
-        await TipoReporte.insertMany(tiposReporte); // Inserta los nuevos registros
+        await EstadoReporte.insertMany(estadosReporte); // Inserta los nuevos registros
         console.log("Tipos de reporte sembrados exitosamente.");
     } catch (error) {
         console.error("Error al conectar a la base de datos:", error);
@@ -19,4 +20,4 @@ const seedTipoReporte = async () => {
     }
 }
 
-export default seedTipoReporte;
+export default seedEstadoReporte;
