@@ -6,7 +6,7 @@ const estadoReporteSchema = new mongoose.Schema({
         required: true,
         unique: true
     }
-});
+}, { collection: 'EstadoReporte' });
 
 const EstadoReporte = mongoose.model('EstadoReporte', estadoReporteSchema);
 export default EstadoReporte;
