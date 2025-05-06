@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
 const tipoMovimientoSchema = new mongoose.Schema({
-    nombre: {
-        type: String,
-        required: true,
-        unique: true
-    }
-}, { collection: 'TipoMovimiento' });
+  nombre: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+});
 
-const TipoMovimiento = mongoose.model('TipoMovimiento', tipoMovimientoSchema);
+const TipoMovimiento = mongoose.model("TipoMovimiento", tipoMovimientoSchema);
 export default TipoMovimiento;
