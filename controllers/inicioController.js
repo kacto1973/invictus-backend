@@ -40,7 +40,7 @@ async function datosInicio() {
     const TotalReactivosAdquiridos = await MovimientoReactivo.aggregate([
         {
             $lookup: {
-                from: "TipoMovimiento",
+                from: "tipomovimientos",
                 localField: "idTipoMovimiento",
                 foreignField: "_id",
                 as: "tipoMovimiento"
