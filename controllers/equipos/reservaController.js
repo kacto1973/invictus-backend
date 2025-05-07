@@ -36,8 +36,9 @@ const createReserva = async (req, res) => {
     }
 
     const equipo = await Equipo.findById(id);
+    let statusEquipo = equipo.status ?? "";
 
-    if (equipo.status == "Eliminado") {
+    if (statusEquipo == "Eliminado") {
       return res.status(404).json({ error: "El equipo no existe" });
     }
 
@@ -78,13 +79,14 @@ const createReserva = async (req, res) => {
     detallesReserva.idEquipo = id;
     detallesReserva.status = true;
 
+    console.log(detallesReserva);
     const reservaNueva = await Reserva.create(detallesReserva);
-
+    console.log(reservaNueva);
     if (!reservaNueva) {
       return res.status(500).json({ error: "Error al reservar equipo" });
     }
 
-    new Date(new Date().setUTCHours(0, 0, 0, 0));
+    const hoy = new Date(new Date().setUTCHours(0, 0, 0, 0));
     if (
       new Date(detallesReserva.fechaInicio) <= hoy &&
       new Date(detallesReserva.fechaFin) >= hoy
