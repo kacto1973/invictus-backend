@@ -10,7 +10,14 @@ const getMovimientos = async (req, res) => {
 
     let movimientos = await MovimientoReactivo.find()
       .populate("idTipoMovimiento", "nombre")
-      .populate("idReactivo", "nombre cantidad");
+      .populate({
+        path: "idReactivo",
+        select: "nombre cantidad idMarca",
+        populate: {
+          path: "idMarca",
+          select: "nombre",
+        },
+      });
 
     if (!movimientos || movimientos.length === 0) {
       return res.status(404).json({ error: "No se encontraron movimientos" });
@@ -32,6 +39,7 @@ const getMovimientos = async (req, res) => {
         id: mov.idReactivo?._id,
         nombre: mov.idReactivo?.nombre,
         cantidad: mov.idReactivo?.cantidad,
+        marca: mov.idReactivo?.idMarca?.nombre || "Sin marca",
       },
     }));
 
@@ -62,7 +70,7 @@ const getTipoMovimientos = async (req, res) => {
 
 const createMovimiento = async (req, res) => {
   try {
-    const { idReactivo, idTipoMovimiento, descripcion, cantidad } = req.body;
+    const { idReactivo, movimiento, descripcion, cantidad, fecha } = req.body;
 
     // checar si cantidad es mayor a 0
     if (!cantidad || cantidad <= 0) {
@@ -72,11 +80,14 @@ const createMovimiento = async (req, res) => {
     }
 
     // checar si el tipo de movimiento existe
-    const tipoMovimiento = await TipoMovimiento.findById(idTipoMovimiento);
+    const tipoMovimiento = await TipoMovimiento.findOne({
+      nombre: { $regex: new RegExp(`^${movimiento}$`, "i") },
+    });
+
     if (!tipoMovimiento) {
       return res
         .status(404)
-        .json({ error: "Tipo de movimiento no encontrado" });
+        .json({ error: `Tipo de movimiento "${movimiento}" no encontrado` });
     }
 
     // checar si el reactivo existe
@@ -97,13 +108,15 @@ const createMovimiento = async (req, res) => {
       reactivo.cantidad += cantidad;
     }
 
-    console.log("Reactivo antes de guardar:", reactivo);
+    //convertir fecha a Date
+    const fechaMovimiento = fecha ? new Date(fecha) : new Date();
 
     const nuevoMovimiento = new MovimientoReactivo({
       idReactivo,
-      idTipoMovimiento,
+      idTipoMovimiento: tipoMovimiento._id,
       descripcion,
       cantidad,
+      fecha: fechaMovimiento,
     });
 
     await nuevoMovimiento.save();
