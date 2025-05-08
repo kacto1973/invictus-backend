@@ -21,6 +21,7 @@ import unidadMedidaRoutes from "./routes/unidadMedidaRoutes.js";
 import inicioRoutes from "./routes/inicioRoutes.js";
 import notificacionRoutes from "./routes/notificacionRoutes.js";
 import reporteRoutes from "./routes/reporteRoutes.js";
+import configuracionRoutes from "./routes/configuracionRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -59,6 +60,7 @@ app.use("/api/unidad-medida", unidadMedidaRoutes);
 app.use("/api/inicio", inicioRoutes);
 app.use("/api/notificaciones", notificacionRoutes);
 app.use("/api/reportes", reporteRoutes);
+app.use("/api/configuracion", configuracionRoutes);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
