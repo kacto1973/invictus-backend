@@ -689,7 +689,7 @@ async function crearTabla(opcion){
             };
         }
         case 3: {
-            const equipos = await Equipo.find()
+            const equipos = await Equipo.find({ status: { $ne: "Eliminado" } });
 
             let datos = [];
 
