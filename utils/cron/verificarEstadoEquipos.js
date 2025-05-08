@@ -68,7 +68,7 @@ const verificarEstadoEquipos = async () => {
  *
  * @see verificarEstadoEquipos
  */
-cron.schedule("0 0 * * *", () => {
+cron.schedule("0 * * * *", () => {
   console.log("Ejecutando verificación de estado de los equipos 👍");
   verificarEstadoEquipos();
 });
