@@ -189,7 +189,7 @@ async function crearGrafico(opcion) {
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Porcentaje de Reactivos por Categoría',
+                            text: 'Porcentaje de la Suma de las Cantidades de Reactivos Por Categoría',
                             font: {
                                 size: 18
                             }
@@ -257,7 +257,7 @@ async function crearGrafico(opcion) {
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Porcentaje de Movimientos de Reactivos',
+                            text: 'Porcentaje de Tipo de Movimientos de Reactivos',
                             font: {
                                 size: 18
                             }
@@ -315,7 +315,7 @@ async function crearGrafico(opcion) {
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Porcentaje de Reactivos Agotados',
+                            text: 'Porcentaje de Reactivos con Cantidad Igual a Cero vs Porcentaje de Reactivos con Cantidad Mayor a Cero',
                             font: {
                                 size: 18
                             }
@@ -412,7 +412,7 @@ async function crearGrafico(opcion) {
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Tendencia de Reservas (últimos 30 días)',
+                            text: 'Gráfica de Tendencia de la Suma de Reservas Totales de Cada Dia (Ultimos 30 dias)',
                             font: {
                                 size: 18
                             }
@@ -530,7 +530,7 @@ async function crearGrafico(opcion) {
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Tendencia de Servicios (últimos 30 días)',
+                            text: 'Gráfica de Tendencia de la Suma de Servicios Totales de Cada Dia (Ultimos 30 dias)',
                             font: {
                                 size: 18
                             }
