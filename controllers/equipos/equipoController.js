@@ -153,12 +153,11 @@ const createEquipo = async (req, res) => {
 
     // subir imagen a public/uploads
     const targetPath = path.join(__dirname, `../../public/uploads/${fileName}`);
-
-    fs.writeFile(targetPath, file.buffer, (err) => {
-      if (err)
-        return res.status(500).json({ error: `Error al subir imagen: ${err}` });
-    });
-
+    try {
+      await fs.promises.writeFile(targetPath, file.buffer);
+    } catch (err) {
+      return res.status(500).json({ error: `Error al subir imagen: ${err}` });
+    }
     equipo.urlImagen = `/uploads/${fileName}`;
     equipo.status = "Liberado";
     const nuevoEquipo = await Equipo.create(equipo);
@@ -220,20 +219,23 @@ const updateEquipo = async (req, res) => {
         __dirname,
         `../../public/uploads/${oldFileName}`
       );
-      fs.unlink(oldPath, (err) => {
-        if (err)
-          return res
-            .status(500)
-            .json({ error: `Error al eliminar imagen anterior: ${err}` });
-      });
+      try {
+        await fs.promises.unlink(oldPath);
+      } catch (err) {
+        if (err.code !== "ENOENT") {
+          console.error(`Error al eliminar imagen anterior: ${err}`);
+          return res.status(500).json({
+            error: `Error al eliminar imagen anterior: ${err.message}`,
+          });
+        }
+      }
 
-      // insertar la nueva imagen
-      fs.writeFile(targetPath, file.buffer, (err) => {
-        if (err)
-          return res
-            .status(500)
-            .json({ error: `Error al subir imagen: ${err}` });
-      });
+      // subir la nueva imagen
+      try {
+        await fs.promises.writeFile(targetPath, file.buffer);
+      } catch (err) {
+        return res.status(500).json({ error: `Error al subir imagen: ${err}` });
+      }
 
       // actualizar el url de la imagen
       equipo.urlImagen = `/uploads/${fileName}`;
