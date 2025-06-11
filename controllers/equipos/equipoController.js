@@ -1,9 +1,12 @@
 import mongoose from "mongoose";
 import Equipo from "../../models/equipo/Equipo.js";
 import { matchSorter } from "match-sorter";
-import { supabase } from "../../config/supabase.js";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 
-const bucketName = "prueba";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(id);
 
 /**
@@ -148,25 +151,15 @@ const createEquipo = async (req, res) => {
     // generar nombre unico para el archivo
     const fileName = `${Date.now()}_${file.originalname}`;
 
-    // subir imagen
-    const { data, error } = await supabase.storage
-      .from(bucketName)
-      .upload(`imagenes/${fileName}`, file.buffer, {
-        contentType: file.mimetype,
-        upsert: false,
-      });
+    // subir imagen a public/uploads
+    const targetPath = path.join(__dirname, `../../public/uploads/${fileName}`);
 
-    if (error) {
-      console.log(error);
-      return res.status(500).json({ error: "Error al subir imagen" });
-    }
+    fs.writeFile(targetPath, file.buffer, (err) => {
+      if (err)
+        return res.status(500).json({ error: `Error al subir imagen: ${err}` });
+    });
 
-    // obtener url publico de la imagen
-    const { data: image } = supabase.storage
-      .from(bucketName)
-      .getPublicUrl(data.path);
-
-    equipo.urlImagen = image.publicUrl;
+    equipo.urlImagen = `/uploads/${fileName}`;
     equipo.status = "Liberado";
     const nuevoEquipo = await Equipo.create(equipo);
 
@@ -215,36 +208,35 @@ const updateEquipo = async (req, res) => {
       // generar nombre unico para el archivo
       const fileName = `${Date.now()}_${file.originalname}`;
 
-      //obtener el nombre del archivo anterior y eliminarlo
-      const urlAnterior = equipoExistente.urlImagen.split("/prueba/")[1];
-      const { deleteData, deleteError } = await supabase.storage
-        .from(bucketName)
-        .remove([urlAnterior]);
+      // obtener path donde se almacenará la nueva imagen
+      const targetPath = path.join(
+        __dirname,
+        `../../public/uploads/${fileName}`
+      );
 
-      if (deleteError) {
-        return res
-          .status(500)
-          .json({ error: "Error al eliminar imagen anterior" });
-      }
+      //obtener el nombre del archivo anterior y eliminarlo
+      const oldFileName = equipoExistente.urlImagen.split("uploads/")[1];
+      const oldPath = path.join(
+        __dirname,
+        `../../public/uploads/${oldFileName}`
+      );
+      fs.unlink(oldPath, (err) => {
+        if (err)
+          return res
+            .status(500)
+            .json({ error: `Error al eliminar imagen anterior: ${err}` });
+      });
 
       // insertar la nueva imagen
-      const { data, error } = await supabase.storage
-        .from(bucketName)
-        .upload(`imagenes/${fileName}`, file.buffer, {
-          contentType: file.mimetype,
-          upsert: false,
-        });
-
-      if (error) {
-        return res.status(500).json({ error: "Error al subir imagen" });
-      }
-
-      const { data: image } = supabase.storage
-        .from(bucketName)
-        .getPublicUrl(data.path);
+      fs.writeFile(targetPath, file.buffer, (err) => {
+        if (err)
+          return res
+            .status(500)
+            .json({ error: `Error al subir imagen: ${err}` });
+      });
 
       // actualizar el url de la imagen
-      equipo.urlImagen = image.publicUrl;
+      equipo.urlImagen = `/uploads/${fileName}`;
     } else {
       // si no hay una nueva imagen, mantener el url original
       equipo.urlImagen = equipoExistente.urlImagen;
