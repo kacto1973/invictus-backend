@@ -6,7 +6,12 @@ const reservaSchema = new mongoose.Schema({
     ref: "Equipo",
     required: true,
   },
-  persona: {
+  descripcion: {
+    type: String,
+    required: true,
+  },
+  usuario: {
+    // TODO: cambiar a id de usuario cuando se implemente
     type: String,
     required: true,
   },
