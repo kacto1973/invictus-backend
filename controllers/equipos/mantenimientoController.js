@@ -19,7 +19,14 @@ const validarFechas = (inicio, fin) => {
 const createMantenimiento = async (req, res) => {
   try {
     let id = req.query.id;
-    let detallesMantenimiento = req.body;
+    let {
+      idEquipo,
+      fechaInicio,
+      fechaFin,
+      descripcion,
+      usuario,
+      proximoMantenimiento,
+    } = req.body;
 
     // checar que el id es un _id valido de mongodb
     if (!isValidObjectId(id)) {
@@ -29,12 +36,7 @@ const createMantenimiento = async (req, res) => {
       });
     }
 
-    if (
-      !validarFechas(
-        detallesMantenimiento.fechaInicio,
-        detallesMantenimiento.fechaFin
-      )
-    ) {
+    if (!validarFechas(fechaInicio, fechaFin)) {
       return res.status(400).json({
         error: "La fecha de fin no puede ser menor a la fecha de inicio",
       });
@@ -52,8 +54,8 @@ const createMantenimiento = async (req, res) => {
       status: true,
       $or: [
         {
-          fechaInicio: { $lte: detallesMantenimiento.fechaFin },
-          fechaFin: { $gte: detallesMantenimiento.fechaInicio },
+          fechaInicio: { $lte: fechaFin },
+          fechaFin: { $gte: fechaInicio },
         },
       ],
     });
@@ -69,8 +71,8 @@ const createMantenimiento = async (req, res) => {
       status: true,
       $or: [
         {
-          fechaInicio: { $lte: detallesMantenimiento.fechaFin },
-          fechaFin: { $gte: detallesMantenimiento.fechaInicio },
+          fechaInicio: { $lte: fechaFin },
+          fechaFin: { $gte: fechaInicio },
         },
       ],
     });
@@ -80,12 +82,17 @@ const createMantenimiento = async (req, res) => {
         .json({ error: "El equipo ya está reservado en ese periodo" });
     }
 
-    detallesMantenimiento.idEquipo = id;
-    detallesMantenimiento.status = true;
+    idEquipo = id;
 
-    const mantenimientoNuevo = await Mantenimiento.create(
-      detallesMantenimiento
-    );
+    const mantenimientoNuevo = await Mantenimiento.create({
+      idEquipo,
+      fechaInicio,
+      fechaFin,
+      descripcion,
+      usuario,
+      proximoMantenimiento,
+      status: true,
+    });
 
     if (!mantenimientoNuevo) {
       return res
@@ -94,10 +101,7 @@ const createMantenimiento = async (req, res) => {
     }
 
     const hoy = new Date(new Date().setUTCHours(0, 0, 0, 0));
-    if (
-      new Date(detallesMantenimiento.fechaInicio) <= hoy &&
-      new Date(detallesMantenimiento.fechaFin) >= hoy
-    ) {
+    if (new Date(fechaInicio) <= hoy && new Date(fechaFin) >= hoy) {
       await Equipo.findByIdAndUpdate(id, { status: "En mantenimiento" });
     }
 

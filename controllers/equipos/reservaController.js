@@ -19,7 +19,7 @@ const validarFechas = (inicio, fin) => {
 const createReserva = async (req, res) => {
   try {
     let id = req.query.id;
-    let detallesReserva = req.body;
+    let { idEquipo, descripcion, usuario, fechaInicio, fechaFin } = req.body;
 
     // checar que el id es un _id valido de mongodb
     if (!isValidObjectId(id)) {
@@ -29,11 +29,13 @@ const createReserva = async (req, res) => {
       });
     }
 
-    if (!validarFechas(detallesReserva.fechaInicio, detallesReserva.fechaFin)) {
+    if (!validarFechas(fechaInicio, fechaFin)) {
       return res.status(400).json({
         error: "La fecha de fin no puede ser menor a la fecha de inicio",
       });
     }
+
+    // TODO: validar que el id de usuario existe cuando se implementen los usuarios
 
     const equipo = await Equipo.findById(id);
     let statusEquipo = equipo.status ?? "";
@@ -48,8 +50,8 @@ const createReserva = async (req, res) => {
       status: true,
       $or: [
         {
-          fechaInicio: { $lte: detallesReserva.fechaFin },
-          fechaFin: { $gte: detallesReserva.fechaInicio },
+          fechaInicio: { $lte: fechaFin },
+          fechaFin: { $gte: fechaInicio },
         },
       ],
     });
@@ -65,8 +67,8 @@ const createReserva = async (req, res) => {
       status: true,
       $or: [
         {
-          fechaInicio: { $lte: detallesReserva.fechaFin },
-          fechaFin: { $gte: detallesReserva.fechaInicio },
+          fechaInicio: { $lte: fechaFin },
+          fechaFin: { $gte: fechaInicio },
         },
       ],
     });
@@ -76,21 +78,23 @@ const createReserva = async (req, res) => {
         .json({ error: "El equipo ya está reservado en ese periodo" });
     }
 
-    detallesReserva.idEquipo = id;
-    detallesReserva.status = true;
+    idEquipo = id;
 
-    console.log(detallesReserva);
-    const reservaNueva = await Reserva.create(detallesReserva);
+    const reservaNueva = await Reserva.create({
+      idEquipo,
+      descripcion,
+      usuario,
+      fechaInicio,
+      fechaFin,
+      status: true,
+    });
     console.log(reservaNueva);
     if (!reservaNueva) {
       return res.status(500).json({ error: "Error al reservar equipo" });
     }
 
     const hoy = new Date(new Date().setUTCHours(0, 0, 0, 0));
-    if (
-      new Date(detallesReserva.fechaInicio) <= hoy &&
-      new Date(detallesReserva.fechaFin) >= hoy
-    ) {
+    if (new Date(fechaInicio) <= hoy && new Date(fechaFin) >= hoy) {
       await Equipo.findByIdAndUpdate(id, { status: "En reserva" });
     }
 
