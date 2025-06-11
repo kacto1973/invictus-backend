@@ -34,14 +34,14 @@ conectarDB();
 const dominiosPermitidos = [process.env.FRONTEND_URL];
 
 const corsOptions = {
-    origin: function (origin, callback) {
-        if (dominiosPermitidos.indexOf(origin) !== -1 || !origin) {
-            // El Origen del Request esta permitido
-            callback(null, true);
-        } else {
-            callback(new Error("No permitido por CORS"));
-        }
-    },
+  origin: function (origin, callback) {
+    if (dominiosPermitidos.indexOf(origin) !== -1 || !origin) {
+      // El Origen del Request esta permitido
+      callback(null, true);
+    } else {
+      callback(new Error("No permitido por CORS"));
+    }
+  },
 };
 
 app.use(cors(corsOptions));
@@ -49,6 +49,8 @@ app.use(cors(corsOptions));
 // Rutas combinadas
 app.use("/api/reactivos", reactivoRoutes);
 app.use("/api/equipos", equipoRoutes);
+// servir imagenes estáticamente
+app.use(express.static("public"));
 app.use("/api/equipos/reserva", reservaRoutes);
 app.use("/api/equipos/mantenimiento", mantenimientoRoutes);
 app.use("/api/movimientos", movimientoRoutes);
