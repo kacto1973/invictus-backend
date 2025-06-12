@@ -19,6 +19,11 @@ const mantenimientoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  usuario: {
+    // TODO: cambiar a id de usuario cuando se implemente
+    type: String,
+    required: true,
+  },
   proximoMantenimiento: {
     type: Date,
     required: false,

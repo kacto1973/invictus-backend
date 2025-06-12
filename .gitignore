@@ -41,3 +41,11 @@ coverage
 
 # Benchmarking
 benchmarks/graphs
+
+# imagenes
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# pdfs
+/public/pdfs/*
+!/public/pdfs/.gitkeep
